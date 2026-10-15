@@ -614,7 +614,7 @@ button[disabled] {
     text-decoration-color: #2f6b4f;
 }
 
-.exercise-table .cell-group { font-weight: 600; color: #2f6b4f; white-space: nowrap; }
+.exercise-table .cell-group { font-weight: 600; color: #2f6b4f; white-space: nowrap; text-align: center; }
 .exercise-table .cell-num { font-weight: 600; color: #4a4232; white-space: nowrap; text-align: center; }
 .exercise-table .cell-comment {
     color: #5a5344;
@@ -1235,16 +1235,29 @@ button[disabled] {
     }
 
     /* Таблица → карточки */
-    .exercise-table,
-    .exercise-table thead,
-    .exercise-table tbody,
-    .exercise-table tr,
-    .exercise-table td {
-        display: block;
-        width: 100%;
-    }
+.exercise-table,
+.exercise-table thead,
+.exercise-table tbody,
+.exercise-table tr,
+.exercise-table td {
+    display: block;
+    width: 100%;
+}
 
-    .exercise-table { border: none; background: transparent; }
+.exercise-table {
+    border: none;
+    background: transparent;
+    min-width: 0;      /* снимаем min-width из .table-scroll .exercise-table */
+}
+
+/* Скролл-обёртка на мобильном не нужна — карточки вертикальные */
+.table-scroll {
+    overflow-x: visible;
+    
+}
+.table-scroll .exercise-table {
+    min-width: 0;
+}
     .exercise-table thead { display: none; }
 
     .exercise-table tbody tr {
@@ -3852,4 +3865,92 @@ body.admin-own-calendar #addFromTemplateBtn {
     .exercise-table tbody tr[draggable="true"] {
         cursor: default;
     }
+}
+/* ================================================================
+   КАРТОЧКА «ИНСТРУКЦИЯ» (у клиента, слева от календаря)
+   ================================================================ */
+.instruction-card {
+    padding: 18px 20px;
+    background: #fdfaf1;
+    border-left: 4px solid #2f6b4f;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 240px;
+}
+
+.instruction-card button {
+    width: 100%;
+    text-align: center;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .instruction-card {
+        width: 100%;
+        padding: 14px 16px;
+    }
+}
+
+/* Плейсхолдер инструкции — временный */
+.instruction-placeholder {
+    color: #8a8067;
+    font-size: 14px;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    border: 1px dashed #d3c7a8;
+    border-radius: 8px;
+}
+/* ================================================================
+   ИНСТРУКЦИЯ — оформление текста
+   ================================================================ */
+#instructionBody {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #2b2b2b;
+}
+
+#instructionBody h3 {
+    color: #2f6b4f;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 20px 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #d3c7a8;
+}
+
+#instructionBody h3:first-child {
+    margin-top: 0;
+}
+
+#instructionBody p {
+    margin: 0 0 12px 0;
+}
+
+#instructionBody ul,
+#instructionBody ol {
+    margin: 0 0 12px 0;
+    padding-left: 22px;
+}
+
+#instructionBody li {
+    margin-bottom: 6px;
+}
+
+#instructionBody strong {
+    color: #2f6b4f;
+    font-weight: 700;
+}
+
+#instructionBody code {
+    background: #f2f7f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #2f6b4f;
+    font-family: 'Courier New', monospace;
 }

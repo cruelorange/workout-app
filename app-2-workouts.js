@@ -123,6 +123,10 @@ function showTemplateSavedMessage(name) {
 // ===== Отрисовка тренировок выбранной даты =====
 function renderSelectedDate() {
     selectedDateLabel.textContent = 'Тренировки за ' + formatDateLabel(selectedDate);
+        // Для клиента — проверить, надо ли показать инструкцию при первом входе
+    if (typeof maybeShowInstruction === 'function') {
+        maybeShowInstruction();
+    }
       // === РЕЖИМ «МОЙ КАЛЕНДАРЬ» АДМИНА ===
     // Показываем сводку по клиентам вместо тренировок
     if (typeof isAdminInOwnCalendar === 'function' && isAdminInOwnCalendar()) {
@@ -194,13 +198,13 @@ function renderSelectedDate() {
     ' data-workout-id="' + workout.id + '"' +
     ' data-block-key="' + block.key + '"' +
     ' data-exercise-id="' + ex.id + '">' +
+    '<td class="cell-group" data-label="Группа">' + (ex.group ? esc(ex.group) : empty()) + '</td>' +
+    '<td class="cell-num" data-label="№">' + (ex.num ? esc(ex.num) : empty()) + '</td>' +
     '<td class="cell-name" data-label="Упражнение" onclick="showLibraryCard(\'' + ex.id + '\',\'' + workout.id + '\',\'' + block.key + '\')">' + esc(ex.name) + '</td>' +
     '<td data-label="Темп">' + (ex.tempo ? esc(ex.tempo) : empty()) + '</td>' +
     '<td data-label="Вес">' + (ex.intensity ? esc(ex.intensity) : empty()) + '</td>' +
     '<td data-label="Подходы">' + (ex.sets ? esc(ex.sets) : empty()) + '</td>' +
     '<td data-label="Отдых">' + (ex.rest ? esc(ex.rest) : empty()) + '</td>' +
-    '<td class="cell-group" data-label="Группа">' + (ex.group ? esc(ex.group) : empty()) + '</td>' +
-    '<td class="cell-num" data-label="№">' + (ex.num ? esc(ex.num) : empty()) + '</td>' +
     '<td class="cell-comment" data-label="Комментарий">' + (ex.comment ? esc(ex.comment) : empty()) + '</td>' +
     '<td class="cell-report" data-label="Отчёт" onclick="openReportModal(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' +
         (ex.report
@@ -220,13 +224,13 @@ function renderSelectedDate() {
               tableHtml = '<div class="table-scroll">' +
     '<table class="exercise-table">' +
         '<thead><tr>' +
+            '<th>Группа</th>' +
+            '<th>№</th>' +
             '<th>Название упражнения</th>' +
             '<th>Темп</th>' +
             '<th>Интенсивность (вес)</th>' +
             '<th>Подходы / повторения</th>' +
             '<th>Время отдыха</th>' +
-            '<th>Группа</th>' +
-            '<th>№</th>' +
             '<th>Комментарий</th>' +
             '<th>Отчёт</th>' +
             '<th>Действия</th>' +
@@ -1539,4 +1543,60 @@ document.addEventListener('drop', function(e) {
     document.querySelectorAll('.exercise-table tr').forEach(function(row) {
         row.classList.remove('drag-over-top', 'drag-over-bottom');
     });
+});
+// ================================================================
+//   ИНСТРУКЦИЯ ПО ТАБЛИЦЕ (только для клиента)
+// ================================================================
+
+// Открыть модалку с инструкцией
+function openInstructionModal() {
+    const modal = document.getElementById('instructionModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+}
+
+// Закрыть модалку + пометить, что инструкция просмотрена
+function closeInstructionModal() {
+    const modal = document.getElementById('instructionModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+
+    // Помечаем, что клиент видел инструкцию
+    const me = getCurrentUser();
+    if (!me || me.role !== 'client') return;
+
+    const user = findUserById(me.id);
+    if (!user) return;
+
+    if (!user.instructionSeen) {
+        user.instructionSeen = true;
+        saveUsersData();
+    }
+}
+
+// Проверить и показать инструкцию при первом заходе
+function maybeShowInstruction() {
+    const me = getCurrentUser();
+    if (!me || me.role !== 'client') return;
+
+    const user = findUserById(me.id);
+    if (!user) return;
+
+    // Уже видел — не показываем
+    if (user.instructionSeen) return;
+
+    // Показываем с небольшой задержкой, чтобы страница успела отрисоваться
+    setTimeout(function() {
+        openInstructionModal();
+    }, 500);
+}
+
+// Кнопка «Как читать таблицу»
+document.getElementById('openInstructionBtn').addEventListener('click', function() {
+    openInstructionModal();
+});
+
+// Кнопка «Понятно»
+document.getElementById('closeInstructionBtn').addEventListener('click', function() {
+    closeInstructionModal();
 });

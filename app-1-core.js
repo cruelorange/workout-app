@@ -171,6 +171,10 @@ function switchPage(page, options) {
         if (btn.dataset.page === page) btn.classList.add('active');
         else btn.classList.remove('active');
     });
+        // При первом заходе клиента на «Мои тренировки» — показать инструкцию
+    if (page === 'workouts' && typeof maybeShowInstruction === 'function') {
+        maybeShowInstruction();
+    }
 
            if (page === 'workouts')  pageTitle.textContent = 'Мои тренировки';
     if (page === 'clients')   pageTitle.textContent = 'Клиенты';
@@ -965,27 +969,27 @@ function buildTemplateContent(tpl) {
             '<div class="template-block-scroll">' +
                 '<table class="exercise-table template-table">' +
                     '<thead><tr>' +
+    '<th>Группа</th>' +
+    '<th>№</th>' +
     '<th>Название</th>' +
     '<th>Темп</th>' +
     '<th>Вес</th>' +
     '<th>Подходы</th>' +
     '<th>Отдых</th>' +
-    '<th>Группа</th>' +
-    '<th>№</th>' +
     '<th>Комментарий</th>' +
 '</tr></thead>' +
                     '<tbody>' +
                         exercises.map(function(ex) {
                             return '<tr>' +
-                                '<td class="cell-name" style="cursor:default; text-decoration:none;">' + esc(ex.name || '—') + '</td>' +
-                                '<td>' + (ex.tempo ? esc(ex.tempo) : '—') + '</td>' +
-                                '<td>' + (ex.intensity ? esc(ex.intensity) : '—') + '</td>' +
-                                '<td>' + (ex.sets ? esc(ex.sets) : '—') + '</td>' +
-                                '<td>' + (ex.rest ? esc(ex.rest) : '—') + '</td>' +
-                                '<td class="cell-group">' + (ex.group ? esc(ex.group) : '—') + '</td>' +
-'<td class="cell-num">' + (ex.num ? esc(ex.num) : '—') + '</td>' +
-'<td class="cell-comment">' + (ex.comment ? esc(ex.comment) : '—') + '</td>' +
-                            '</tr>';
+    '<td class="cell-group">' + (ex.group ? esc(ex.group) : '—') + '</td>' +
+    '<td class="cell-num">' + (ex.num ? esc(ex.num) : '—') + '</td>' +
+    '<td class="cell-name" style="cursor:default; text-decoration:none;">' + esc(ex.name || '—') + '</td>' +
+    '<td>' + (ex.tempo ? esc(ex.tempo) : '—') + '</td>' +
+    '<td>' + (ex.intensity ? esc(ex.intensity) : '—') + '</td>' +
+    '<td>' + (ex.sets ? esc(ex.sets) : '—') + '</td>' +
+    '<td>' + (ex.rest ? esc(ex.rest) : '—') + '</td>' +
+    '<td class="cell-comment">' + (ex.comment ? esc(ex.comment) : '—') + '</td>' +
+'</tr>';
                         }).join('') +
                     '</tbody>' +
                 '</table>' +
