@@ -538,6 +538,19 @@ button[disabled] {
 .block.collapsed-block .block-header h4::before {
     background: #cbbf9f;
 }
+/* ================================================================
+   СКРОЛЛ ТАБЛИЦЫ УПРАЖНЕНИЙ
+   ================================================================ */
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
+
+.table-scroll .exercise-table {
+    min-width: 900px;
+}
 
 /* ===== Таблица упражнений ===== */
 .exercise-table {
@@ -1115,7 +1128,42 @@ button[disabled] {
     font-style: italic;
     padding: 4px 0;
 }
+/* ================================================================
+   ПРОМЕЖУТОЧНАЯ ШИРИНА — сжимаем таблицу, но не превращаем в карточки
+   ================================================================ */
+@media (max-width: 1100px) and (min-width: 701px) {
+    .exercise-table {
+        font-size: 12px;
+    }
 
+    .exercise-table thead th {
+        padding: 8px 8px;
+        font-size: 10px;
+        letter-spacing: 0.3px;
+    }
+
+    .exercise-table tbody td {
+        padding: 8px 8px;
+    }
+
+    .exercise-table .cell-name {
+        min-width: 130px;
+    }
+
+    .exercise-table .cell-comment {
+        max-width: 160px;
+    }
+
+    .exercise-table .cell-report {
+        min-width: 100px;
+        max-width: 130px;
+    }
+
+    .exercise-table .cell-actions button {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
 /* ===== Мобильная адаптация ===== */
 @media (max-width: 700px) {
 

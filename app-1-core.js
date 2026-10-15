@@ -10,9 +10,10 @@ const STORAGE_USERS     = 'users_v1';
 const IMPERSONATION_KEY = 'impersonatingUserId_v1';
 
 const BLOCKS = {
-    warmup:   { key: 'warmup',   title: 'Разминка',               optional: false },
-    speed:    { key: 'speed',    title: 'Скоростно-силовой блок', optional: true  },
-    strength: { key: 'strength', title: 'Силовая часть',          optional: false }
+    warmup:       { key: 'warmup',       title: 'Разминка',                       optional: false },
+    speed:        { key: 'speed',        title: 'Скоростно-силовой блок',         optional: true  },
+    strength:     { key: 'strength',     title: 'Силовая часть',                  optional: false },
+    conditioning: { key: 'conditioning', title: 'Кондиции/подсобная работа',      optional: true  }
 };
 
 const GROUP_COLORS = 6;

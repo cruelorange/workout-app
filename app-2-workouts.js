@@ -81,7 +81,7 @@ function createTemplateFromWorkout(client, workout) {
     const template = {
         id: uuid(),
         name: workout.name,
-        blocks: copied.blocks || { warmup: [], speed: [], strength: [] },
+        blocks: copied.blocks || { warmup: [], speed: [], strength: [], conditioning: [] },
         hiddenBlocks: copied.hiddenBlocks || [],
         createdAt: new Date().toISOString()
     };
@@ -95,7 +95,7 @@ function overwriteTemplate(client, existingTemplate, workout) {
     const copied = JSON.parse(JSON.stringify(workout));
 
     existingTemplate.name = workout.name;
-    existingTemplate.blocks = copied.blocks || { warmup: [], speed: [], strength: [] };
+    existingTemplate.blocks = copied.blocks || { warmup: [], speed: [], strength: [], conditioning: [] };
     existingTemplate.hiddenBlocks = copied.hiddenBlocks || [];
     existingTemplate.updatedAt = new Date().toISOString();
 
@@ -217,21 +217,23 @@ function renderSelectedDate() {
 '</tr>';
                 }).join('');
 
-                tableHtml = '<table class="exercise-table">' +
-    '<thead><tr>' +
-        '<th>Название упражнения</th>' +
-        '<th>Темп</th>' +
-        '<th>Интенсивность (вес)</th>' +
-        '<th>Подходы / повторения</th>' +
-        '<th>Время отдыха</th>' +
-        '<th>Группа</th>' +
-        '<th>№</th>' +
-        '<th>Комментарий</th>' +
-        '<th>Отчёт</th>' +
-        '<th>Действия</th>' +
-    '</tr></thead>' +
-    '<tbody>' + rows + '</tbody>' +
-'</table>';
+              tableHtml = '<div class="table-scroll">' +
+    '<table class="exercise-table">' +
+        '<thead><tr>' +
+            '<th>Название упражнения</th>' +
+            '<th>Темп</th>' +
+            '<th>Интенсивность (вес)</th>' +
+            '<th>Подходы / повторения</th>' +
+            '<th>Время отдыха</th>' +
+            '<th>Группа</th>' +
+            '<th>№</th>' +
+            '<th>Комментарий</th>' +
+            '<th>Отчёт</th>' +
+            '<th>Действия</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+'</div>';
             }
 
             let blockActionsHtml = '';
@@ -328,7 +330,7 @@ window.applyTemplate = async function(templateId) {
     const newWorkout = {
         id: uuid(),
         name: copied.name,
-        blocks: copied.blocks || { warmup: [], speed: [], strength: [] },
+        blocks: copied.blocks || { warmup: [], speed: [], strength: [], conditioning: [] },
         hiddenBlocks: copied.hiddenBlocks || []
     };
 
@@ -597,7 +599,7 @@ document.getElementById('workoutForm').addEventListener('submit', function(e) {
     dataByDate[selectedDate].push({
         id: uuid(),
         name: name,
-        blocks: { warmup: [], speed: [], strength: [] },
+        blocks: { warmup: [], speed: [], strength: [], conditioning: [] },
         hiddenBlocks: []
     });
 
@@ -905,8 +907,11 @@ exerciseForm.addEventListener('submit', async function(e) {
 
     const w = (dataByDate[selectedDate] || []).find(function(x) { return x.id === currentWorkoutId; });
     if (!w) { await showAlert('Тренировка не найдена'); return; }
-    const list = w.blocks[currentBlockKey];
-    if (!list) { await showAlert('Блок не найден'); return; }
+    // Если блока нет — создаём его пустым массивом
+if (!w.blocks[currentBlockKey]) {
+    w.blocks[currentBlockKey] = [];
+}
+const list = w.blocks[currentBlockKey];
 
     let name = '';
     if (exerciseSource === 'custom') {

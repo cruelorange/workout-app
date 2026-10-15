@@ -56,7 +56,26 @@ function getAllExerciseGroups() {
     result.sort(function(a, b) { return a.localeCompare(b, 'ru'); });
     return result;
 }
+// Собрать все уникальные векторы из упражнений
+function getAllExerciseVectors() {
+    const fromExercises = exercisesLib
+        .map(function(ex) { return (ex.vector || '').trim(); })
+        .filter(Boolean);
 
+    const seen = {};
+    const result = [];
+
+    fromExercises.forEach(function(v) {
+        const key = v.toLowerCase();
+        if (!seen[key]) {
+            seen[key] = true;
+            result.push(v);
+        }
+    });
+
+    result.sort(function(a, b) { return a.localeCompare(b, 'ru'); });
+    return result;
+}
 // Обновить содержимое <datalist> в модалке библиотеки
 function renderGroupDatalist() {
     const list = document.getElementById('libGroupList');
@@ -167,21 +186,46 @@ function renderLibrary() {
     if (exercisesLib.length === 0) {
         exercisesListEl.innerHTML = '<p class="no-exercises">Библиотека пуста. Добавьте первое упражнение!</p>';
         renderLibraryGroupFilter();
+        renderLibraryVectorFilter();
         return;
     }
 
-    // Обновляем выпадающий фильтр
     renderLibraryGroupFilter();
+    renderLibraryVectorFilter();
 
-    // Получаем активный фильтр
-    const filterSelect = document.getElementById('libraryGroupFilter');
-    const activeFilter = filterSelect ? filterSelect.value : '';
+    const groupSelect = document.getElementById('libraryGroupFilter');
+    const vectorSelect = document.getElementById('libraryVectorFilter');
+    const activeGroup = groupSelect ? groupSelect.value : '';
+    const activeVector = vectorSelect ? vectorSelect.value : '';
 
-    // Группируем упражнения по группам
+    const filtered = exercisesLib.filter(function(ex) {
+        const g = (ex.group || '').trim();
+        const v = (ex.vector || '').trim();
+
+        if (activeGroup === '__no_group__') {
+            if (g) return false;
+        } else if (activeGroup && g !== activeGroup) {
+            return false;
+        }
+
+        if (activeVector === '__no_vector__') {
+            if (v) return false;
+        } else if (activeVector && v !== activeVector) {
+            return false;
+        }
+
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        exercisesListEl.innerHTML = '<p class="no-exercises">По выбранным фильтрам упражнений не найдено.</p>';
+        return;
+    }
+
     const groupsMap = {};
     const noGroup = [];
 
-    exercisesLib.forEach(function(ex) {
+    filtered.forEach(function(ex) {
         const g = (ex.group || '').trim();
         if (!g) {
             noGroup.push(ex);
@@ -191,23 +235,18 @@ function renderLibrary() {
         }
     });
 
-    // Сортировка групп по алфавиту
     const sortedGroups = Object.keys(groupsMap).sort(function(a, b) {
         return a.localeCompare(b, 'ru');
     });
 
-    // Рендерим каждую группу
     sortedGroups.forEach(function(groupName) {
-        if (activeFilter && activeFilter !== groupName) return;
         renderExerciseGroupSection(groupName, groupsMap[groupName]);
     });
 
-    // Без группы — в конце
-    if (noGroup.length > 0 && (!activeFilter || activeFilter === '__no_group__')) {
+    if (noGroup.length > 0) {
         renderExerciseGroupSection('Без группы', noGroup, true);
     }
 }
-
 // Отрисовать одну секцию-группу
 function renderExerciseGroupSection(groupName, exercises, isNoGroup) {
     const section = document.createElement('div');
@@ -295,15 +334,49 @@ function renderLibraryGroupFilter() {
     // Восстанавливаем выбранное значение
     if (currentValue) select.value = currentValue;
 }
+// Обновить выпадающий фильтр по векторам
+function renderLibraryVectorFilter() {
+    const select = document.getElementById('libraryVectorFilter');
+    if (!select) return;
 
-// Обработчик смены фильтра — вешаем один раз при загрузке
-(function initLibraryFilter() {
+    const currentValue = select.value;
+
+    const vectors = getAllExerciseVectors();
+
+    let html = '<option value="">Все векторы</option>';
+    vectors.forEach(function(v) {
+        html += '<option value="' + esc(v) + '">' + esc(v) + '</option>';
+    });
+
+    const hasNoVector = exercisesLib.some(function(ex) {
+        return !(ex.vector || '').trim();
+    });
+    if (hasNoVector) {
+        html += '<option value="__no_vector__">Без вектора</option>';
+    }
+
+    select.innerHTML = html;
+
+    if (currentValue) select.value = currentValue;
+}
+
+// Обработчики обоих фильтров — вешаем один раз при загрузке
+(function initLibraryFilters() {
     function attach() {
-        const select = document.getElementById('libraryGroupFilter');
-        if (!select) return;
-        select.addEventListener('change', function() {
-            renderLibrary();
-        });
+        const groupSelect = document.getElementById('libraryGroupFilter');
+        const vectorSelect = document.getElementById('libraryVectorFilter');
+
+        if (groupSelect) {
+            groupSelect.addEventListener('change', function() {
+                renderLibrary();
+            });
+        }
+
+        if (vectorSelect) {
+            vectorSelect.addEventListener('change', function() {
+                renderLibrary();
+            });
+        }
     }
 
     if (document.readyState === 'loading') {
