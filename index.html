@@ -434,9 +434,12 @@
                 </div>
 
                 <form id="exerciseForm">
-                    <label>Темп
-                        <input type="text" id="fTempo" placeholder="Например, 2-0-2">
-                    </label>
+    <label>№
+        <input type="text" id="fNum" placeholder="Например, 1">
+    </label>
+    <label>Темп
+        <input type="text" id="fTempo" placeholder="Например, 2-0-2">
+    </label>
                     <label>Интенсивность (вес)
                         <input type="text" id="fIntensity" placeholder="Например, 50 кг или 70%">
                     </label>
@@ -517,7 +520,25 @@
             </div>
         </div>
     </div>
-
+    <!-- ========== МОДАЛКА: РЕДАКТИРОВАНИЕ НАЗВАНИЯ ТРЕНИРОВКИ ========== -->
+    <div id="editWorkoutNameModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Редактировать название тренировки</h2>
+            </div>
+            <div class="modal-body">
+                <form id="editWorkoutNameForm">
+                    <label>Название тренировки
+                        <input type="text" id="editWorkoutNameInput" required>
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelEditWorkoutName">Отмена</button>
+                <button type="submit" form="editWorkoutNameForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
     <!-- ========== МОДАЛКА: СОЗДАНИЕ/РЕДАКТИРОВАНИЕ ПРОГРАММЫ ========== -->
     <div id="programModal" class="modal hidden">
         <div class="modal-content modal-wide">

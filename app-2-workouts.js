@@ -190,43 +190,48 @@ function renderSelectedDate() {
                         ? groupColorMap[ex.group] : '';
                     const colorAttr = colorIdx !== '' ? ' data-group-color="' + colorIdx + '"' : '';
 
-                    return '<tr' + colorAttr + '>' +
-                        '<td class="cell-name" data-label="Упражнение" onclick="showLibraryCard(\'' + ex.id + '\',\'' + workout.id + '\',\'' + block.key + '\')">' + esc(ex.name) + '</td>' +
-                        '<td data-label="Темп">' + (ex.tempo ? esc(ex.tempo) : empty()) + '</td>' +
-                        '<td data-label="Вес">' + (ex.intensity ? esc(ex.intensity) : empty()) + '</td>' +
-                        '<td data-label="Подходы">' + (ex.sets ? esc(ex.sets) : empty()) + '</td>' +
-                        '<td data-label="Отдых">' + (ex.rest ? esc(ex.rest) : empty()) + '</td>' +
-                        '<td class="cell-group" data-label="Группа">' + (ex.group ? esc(ex.group) : empty()) + '</td>' +
-                        '<td class="cell-comment" data-label="Комментарий">' + (ex.comment ? esc(ex.comment) : empty()) + '</td>' +
-                        '<td class="cell-report" data-label="Отчёт" onclick="openReportModal(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' +
-    (ex.report
-        ? '<div class="report-preview">' + esc(ex.report) + '</div>'
-        : (isClient
-            ? '<span class="report-empty">+ Отчёт</span>'
-            : '<span class="cell-empty">—</span>')
-    ) +
-'</td>' +
-                        '<td class="cell-actions">' +
-    '<button title="Редактировать" onclick="editExercise(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' + icons.pencil(14) + '</button>' +
-    '<button class="danger" title="Удалить" onclick="deleteExercise(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' + icons.trash(14) + '</button>' +
-'</td>' +
-                    '</tr>';
+                    return '<tr' + colorAttr + ' draggable="true"' +
+    ' data-workout-id="' + workout.id + '"' +
+    ' data-block-key="' + block.key + '"' +
+    ' data-exercise-id="' + ex.id + '">' +
+    '<td class="cell-name" data-label="Упражнение" onclick="showLibraryCard(\'' + ex.id + '\',\'' + workout.id + '\',\'' + block.key + '\')">' + esc(ex.name) + '</td>' +
+    '<td data-label="Темп">' + (ex.tempo ? esc(ex.tempo) : empty()) + '</td>' +
+    '<td data-label="Вес">' + (ex.intensity ? esc(ex.intensity) : empty()) + '</td>' +
+    '<td data-label="Подходы">' + (ex.sets ? esc(ex.sets) : empty()) + '</td>' +
+    '<td data-label="Отдых">' + (ex.rest ? esc(ex.rest) : empty()) + '</td>' +
+    '<td class="cell-group" data-label="Группа">' + (ex.group ? esc(ex.group) : empty()) + '</td>' +
+    '<td class="cell-num" data-label="№">' + (ex.num ? esc(ex.num) : empty()) + '</td>' +
+    '<td class="cell-comment" data-label="Комментарий">' + (ex.comment ? esc(ex.comment) : empty()) + '</td>' +
+    '<td class="cell-report" data-label="Отчёт" onclick="openReportModal(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' +
+        (ex.report
+            ? '<div class="report-preview">' + esc(ex.report) + '</div>'
+            : (isClient
+                ? '<span class="report-empty">+ Отчёт</span>'
+                : '<span class="cell-empty">—</span>')
+        ) +
+    '</td>' +
+    '<td class="cell-actions">' +
+        '<button title="Редактировать" onclick="editExercise(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' + icons.pencil(14) + '</button>' +
+        '<button class="danger" title="Удалить" onclick="deleteExercise(\'' + workout.id + '\',\'' + block.key + '\',\'' + ex.id + '\')">' + icons.trash(14) + '</button>' +
+    '</td>' +
+'</tr>';
                 }).join('');
 
                 tableHtml = '<table class="exercise-table">' +
-                    '<thead><tr>' +
-                        '<th>Название упражнения</th>' +
-                        '<th>Темп</th>' +
-                        '<th>Интенсивность (вес)</th>' +
-                        '<th>Подходы / повторения</th>' +
-                        '<th>Время отдыха</th>' +
-                        '<th>Группа</th>' +
-                        '<th>Комментарий</th>' +
-                        '<th>Отчёт</th>' +
-                        '<th>Действия</th>' +
-                    '</tr></thead>' +
-                    '<tbody>' + rows + '</tbody>' +
-                '</table>';
+    '<thead><tr>' +
+        '<th>Название упражнения</th>' +
+        '<th>Темп</th>' +
+        '<th>Интенсивность (вес)</th>' +
+        '<th>Подходы / повторения</th>' +
+        '<th>Время отдыха</th>' +
+        '<th>Группа</th>' +
+        '<th>№</th>' +
+        '<th>Комментарий</th>' +
+        '<th>Отчёт</th>' +
+        '<th>Действия</th>' +
+    '</tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+'</table>';
             }
 
             let blockActionsHtml = '';
@@ -254,15 +259,15 @@ function renderSelectedDate() {
             '</div>';
         });
 
-               div.innerHTML = '<div class="workout-header">' +
-                '<h3>' + esc(workout.name) + '</h3>' +
-                '<div class="actions">' +
-                    '<button class="secondary" onclick="saveWorkoutAsTemplate(\'' + workout.id + '\')">Сохранить как шаблон</button>' +
-                    '<button class="danger" onclick="deleteWorkout(\'' + workout.id + '\')">Удалить тренировку</button>' +
-                '</div>' +
-            '</div>' +
-            blocksHtml;
-
+              div.innerHTML = '<div class="workout-header">' +
+    '<h3>' + esc(workout.name) + '</h3>' +
+    '<div class="actions">' +
+        '<button class="secondary" onclick="openEditWorkoutNameModal(\'' + workout.id + '\')">Редактировать</button>' +
+        '<button class="secondary" onclick="saveWorkoutAsTemplate(\'' + workout.id + '\')">Сохранить как шаблон</button>' +
+        '<button class="danger" onclick="deleteWorkout(\'' + workout.id + '\')">Удалить тренировку</button>' +
+    '</div>' +
+'</div>' +
+blocksHtml;
         workoutsList.appendChild(div);
     });
 
@@ -703,7 +708,7 @@ document.querySelectorAll('.exercise-source-toggle .tab-btn').forEach(function(b
 
 // Снимок формы — для отслеживания изменений
 function snapshotExerciseForm() {
-    const fields = ['fName', 'fTempo', 'fIntensity', 'fSets', 'fRest', 'fGroup', 'fComment'];
+    const fields = ['fName', 'fNum', 'fTempo', 'fIntensity', 'fSets', 'fRest', 'fGroup', 'fComment'];
     return fields.map(function(id) {
         const el = document.getElementById(id);
         return el ? el.value : '';
@@ -729,12 +734,13 @@ function openExerciseModalInternal(workoutId, blockKey, exerciseId) {
         const ex = w.blocks[blockKey].find(function(e) { return e.id === exerciseId; });
 
         document.getElementById('fName').value      = ex.name || '';
-        document.getElementById('fTempo').value     = ex.tempo || '';
-        document.getElementById('fIntensity').value = ex.intensity || '';
-        document.getElementById('fSets').value      = ex.sets || '';
-        document.getElementById('fRest').value      = ex.rest || '';
-        document.getElementById('fGroup').value     = ex.group || '';
-        document.getElementById('fComment').value   = ex.comment || '';
+document.getElementById('fNum').value       = ex.num || '';
+document.getElementById('fTempo').value     = ex.tempo || '';
+document.getElementById('fIntensity').value = ex.intensity || '';
+document.getElementById('fSets').value      = ex.sets || '';
+document.getElementById('fRest').value      = ex.rest || '';
+document.getElementById('fGroup').value     = ex.group || '';
+document.getElementById('fComment').value   = ex.comment || '';
         modalTitle.textContent = 'Редактировать упражнение';
     } else {
         document.querySelector('.exercise-source-toggle').classList.remove('hidden');
@@ -923,15 +929,16 @@ exerciseForm.addEventListener('submit', async function(e) {
     }
 
     const data = {
-        name: editingExerciseId ? document.getElementById('fName').value.trim() : name,
-        libraryId: libraryId,
-        tempo: document.getElementById('fTempo').value.trim(),
-        intensity: document.getElementById('fIntensity').value.trim(),
-        sets: document.getElementById('fSets').value.trim(),
-        rest: document.getElementById('fRest').value.trim(),
-        group: document.getElementById('fGroup').value.trim(),
-        comment: document.getElementById('fComment').value.trim()
-    };
+    name: editingExerciseId ? document.getElementById('fName').value.trim() : name,
+    libraryId: libraryId,
+    num: document.getElementById('fNum').value.trim(),
+    tempo: document.getElementById('fTempo').value.trim(),
+    intensity: document.getElementById('fIntensity').value.trim(),
+    sets: document.getElementById('fSets').value.trim(),
+    rest: document.getElementById('fRest').value.trim(),
+    group: document.getElementById('fGroup').value.trim(),
+    comment: document.getElementById('fComment').value.trim()
+};
 
     if (editingExerciseId) {
         const ex = list.find(function(x) { return x.id === editingExerciseId; });
@@ -1324,3 +1331,207 @@ function renderAdminDaySummary() {
 
     workoutsList.innerHTML = html;
 }
+// ================================================================
+//   РЕДАКТИРОВАНИЕ НАЗВАНИЯ ТРЕНИРОВКИ
+// ================================================================
+
+let editingWorkoutId = null;
+let editingWorkoutSnapshot = '';
+
+// Открыть модалку редактирования названия
+window.openEditWorkoutNameModal = function(workoutId) {
+    const w = (dataByDate[selectedDate] || []).find(function(x) { return x.id === workoutId; });
+    if (!w) {
+        showAlert('Тренировка не найдена');
+        return;
+    }
+
+    editingWorkoutId = workoutId;
+
+    const input = document.getElementById('editWorkoutNameInput');
+    input.value = w.name || '';
+    editingWorkoutSnapshot = w.name || '';
+
+    document.getElementById('editWorkoutNameModal').classList.remove('hidden');
+
+    // Фокус на поле + выделение текста
+    setTimeout(function() {
+        input.focus();
+        input.select();
+    }, 50);
+};
+
+// Закрыть модалку
+function closeEditWorkoutNameModal() {
+    document.getElementById('editWorkoutNameModal').classList.add('hidden');
+    editingWorkoutId = null;
+    editingWorkoutSnapshot = '';
+}
+
+// Обработчик формы
+document.getElementById('editWorkoutNameForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (!editingWorkoutId) return;
+
+    const input = document.getElementById('editWorkoutNameInput');
+    const newName = input.value.trim();
+
+    if (!newName) {
+        await showAlert('Введите название тренировки');
+        return;
+    }
+
+    const w = (dataByDate[selectedDate] || []).find(function(x) { return x.id === editingWorkoutId; });
+    if (!w) {
+        await showAlert('Тренировка не найдена');
+        closeEditWorkoutNameModal();
+        return;
+    }
+
+    w.name = newName;
+    saveWorkoutsData();
+    closeEditWorkoutNameModal();
+    renderSelectedDate();
+});
+
+// Кнопка «Отмена»
+document.getElementById('cancelEditWorkoutName').addEventListener('click', async function() {
+    const input = document.getElementById('editWorkoutNameInput');
+    const currentValue = input.value.trim();
+
+    // Если название изменилось — спросим подтверждение
+    if (currentValue !== editingWorkoutSnapshot) {
+        const ok = await showConfirm(
+            'Отменить изменения?',
+            'Новое название не сохранится.',
+            'Да, выйти'
+        );
+        if (!ok) return;
+    }
+
+    closeEditWorkoutNameModal();
+});
+// ================================================================
+//   DRAG & DROP УПРАЖНЕНИЙ ВНУТРИ БЛОКА
+// ================================================================
+
+let dragSourceExerciseId = null;
+let dragSourceWorkoutId = null;
+let dragSourceBlockKey = null;
+
+// Один общий обработчик на документ — делегирование событий
+document.addEventListener('dragstart', function(e) {
+    const tr = e.target.closest('tr[draggable="true"]');
+    if (!tr) return;
+
+    dragSourceWorkoutId = tr.dataset.workoutId;
+    dragSourceBlockKey  = tr.dataset.blockKey;
+    dragSourceExerciseId = tr.dataset.exerciseId;
+
+    tr.classList.add('dragging');
+
+    // Чтобы Firefox начал перетаскивание
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', dragSourceExerciseId);
+});
+
+document.addEventListener('dragend', function(e) {
+    const tr = e.target.closest('tr[draggable="true"]');
+    if (tr) tr.classList.remove('dragging');
+
+    // Убираем все подсказки
+    document.querySelectorAll('.exercise-table tr').forEach(function(row) {
+        row.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+
+    dragSourceExerciseId = null;
+    dragSourceWorkoutId = null;
+    dragSourceBlockKey = null;
+});
+
+document.addEventListener('dragover', function(e) {
+    const tr = e.target.closest('tr[draggable="true"]');
+    if (!tr) return;
+
+    // Разрешаем drop только в том же блоке и той же тренировке
+    if (tr.dataset.workoutId !== dragSourceWorkoutId) return;
+    if (tr.dataset.blockKey !== dragSourceBlockKey) return;
+    if (tr.dataset.exerciseId === dragSourceExerciseId) return;
+
+    // Отменяем дефолт — иначе drop не сработает
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+
+    // Определяем, сверху или снизу от центра строки находится курсор
+    const rect = tr.getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    const isTopHalf = e.clientY < midpoint;
+
+    // Снимаем старые подсказки
+    tr.classList.remove('drag-over-top', 'drag-over-bottom');
+    tr.classList.add(isTopHalf ? 'drag-over-top' : 'drag-over-bottom');
+});
+
+document.addEventListener('dragleave', function(e) {
+    const tr = e.target.closest('tr[draggable="true"]');
+    if (!tr) return;
+    tr.classList.remove('drag-over-top', 'drag-over-bottom');
+});
+
+document.addEventListener('drop', function(e) {
+    const tr = e.target.closest('tr[draggable="true"]');
+    if (!tr) return;
+
+    // Те же проверки, что и в dragover
+    if (tr.dataset.workoutId !== dragSourceWorkoutId) return;
+    if (tr.dataset.blockKey !== dragSourceBlockKey) return;
+    if (tr.dataset.exerciseId === dragSourceExerciseId) return;
+
+    e.preventDefault();
+
+    const targetExerciseId = tr.dataset.exerciseId;
+
+    // Определяем позицию — до или после целевой строки
+    const rect = tr.getBoundingClientRect();
+    const midpoint = rect.top + rect.height / 2;
+    const insertBefore = e.clientY < midpoint;
+
+    // Находим тренировку и массив упражнений
+    const workout = (dataByDate[selectedDate] || []).find(function(w) {
+        return w.id === dragSourceWorkoutId;
+    });
+    if (!workout) return;
+
+    const list = workout.blocks[dragSourceBlockKey];
+    if (!list) return;
+
+    const sourceIdx = list.findIndex(function(ex) {
+        return ex.id === dragSourceExerciseId;
+    });
+    const targetIdx = list.findIndex(function(ex) {
+        return ex.id === targetExerciseId;
+    });
+
+    if (sourceIdx === -1 || targetIdx === -1) return;
+
+    // Вынимаем упражнение из массива
+    const moved = list.splice(sourceIdx, 1)[0];
+
+    // Вычисляем новый индекс для вставки
+    let newIdx = targetIdx;
+    if (sourceIdx < targetIdx) newIdx--; // сдвиг, потому что мы уже удалили один элемент
+    if (!insertBefore) newIdx++;
+
+    // Вставляем
+    list.splice(newIdx, 0, moved);
+
+    // Сохраняем и перерисовываем
+    saveWorkoutsData();
+    renderSelectedDate();
+
+    // Снимаем подсказки
+    document.querySelectorAll('.exercise-table tr').forEach(function(row) {
+        row.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+});

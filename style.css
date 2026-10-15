@@ -602,6 +602,7 @@ button[disabled] {
 }
 
 .exercise-table .cell-group { font-weight: 600; color: #2f6b4f; white-space: nowrap; }
+.exercise-table .cell-num { font-weight: 600; color: #4a4232; white-space: nowrap; text-align: center; }
 .exercise-table .cell-comment {
     color: #5a5344;
     font-size: 13px;
@@ -3758,5 +3759,49 @@ body.admin-own-calendar #addFromTemplateBtn {
 
     .admin-day-summary-btn {
         width: 100%;
+    }
+}
+/* ================================================================
+   DRAG & DROP СТРОК УПРАЖНЕНИЙ
+   ================================================================ */
+.exercise-table tbody tr[draggable="true"] {
+    cursor: grab;
+    transition: background 0.15s, box-shadow 0.2s, transform 0.15s;
+}
+
+.exercise-table tbody tr[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* Строка, которую тащат — не исчезает, а «пульсирует» зелёным */
+.exercise-table tbody tr.dragging {
+    background: #e5f0e6 !important;
+    box-shadow: inset 0 0 0 2px #2f6b4f;
+    animation: dragPulse 1s ease-in-out infinite;
+    opacity: 1;
+}
+
+@keyframes dragPulse {
+    0%   { background: #e5f0e6; }
+    50%  { background: #d4ead6; }
+    100% { background: #e5f0e6; }
+}
+
+/* Строка НАД которой бросят — зелёная полоса СВЕРХУ + подсветка */
+.exercise-table tbody tr.drag-over-top {
+    box-shadow: inset 0 4px 0 0 #2f6b4f;
+    background: #f2f7f1 !important;
+}
+
+/* Строка ПОД которой бросят — зелёная полоса СНИЗУ + подсветка */
+.exercise-table tbody tr.drag-over-bottom {
+    box-shadow: inset 0 -4px 0 0 #2f6b4f;
+    background: #f2f7f1 !important;
+}
+
+/* На мобильных тащить нельзя — отключаем cursor */
+@media (max-width: 700px) {
+    .exercise-table tbody tr[draggable="true"] {
+        cursor: default;
     }
 }

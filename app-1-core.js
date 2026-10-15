@@ -149,8 +149,17 @@ const exercisesListEl = document.getElementById('exercisesList');
 const programsListEl  = document.getElementById('programsList');
 
 // ===== Навигация между страницами =====
-function switchPage(page) {
+// Флаг: сейчас идёт обработка popstate — не надо пушить историю
+let suppressHistoryPush = false;
+
+function switchPage(page, options) {
+    options = options || {};
     currentPage = page;
+
+    // Обновляем историю браузера, если не подавлено
+    if (!suppressHistoryPush && !options.skipHistory) {
+        history.pushState({ page: page }, '', '#' + page);
+    }
 
     document.querySelectorAll('.page').forEach(function(el) {
         el.classList.add('hidden');
@@ -186,6 +195,15 @@ function switchPage(page) {
 
 document.querySelectorAll('.menu-link').forEach(function(btn) {
     btn.addEventListener('click', function() { switchPage(btn.dataset.page); });
+});
+// ===== Обработка кнопки «Назад» браузера =====
+window.addEventListener('popstate', function(e) {
+    const page = (e.state && e.state.page) ? e.state.page : 'workouts';
+
+    // Ставим флаг, чтобы switchPage не запушил новую запись в историю
+    suppressHistoryPush = true;
+    switchPage(page, { skipHistory: true });
+    suppressHistoryPush = false;
 });
 
 function openSideMenu() {
@@ -636,6 +654,11 @@ initLoginForm();
 
 // Проверка сессии при загрузке
 checkSession();
+
+// Инициализация истории — чтобы при первом «Назад» было куда возвращаться
+if (!history.state || !history.state.page) {
+    history.replaceState({ page: currentPage }, '', '#' + currentPage);
+}
 // ================================================================
 //   ВЫХОД ИЗ АККАУНТА
 // ================================================================
@@ -941,14 +964,15 @@ function buildTemplateContent(tpl) {
             '<div class="template-block-scroll">' +
                 '<table class="exercise-table template-table">' +
                     '<thead><tr>' +
-                        '<th>Название</th>' +
-                        '<th>Темп</th>' +
-                        '<th>Вес</th>' +
-                        '<th>Подходы</th>' +
-                        '<th>Отдых</th>' +
-                        '<th>Группа</th>' +
-                        '<th>Комментарий</th>' +
-                    '</tr></thead>' +
+    '<th>Название</th>' +
+    '<th>Темп</th>' +
+    '<th>Вес</th>' +
+    '<th>Подходы</th>' +
+    '<th>Отдых</th>' +
+    '<th>Группа</th>' +
+    '<th>№</th>' +
+    '<th>Комментарий</th>' +
+'</tr></thead>' +
                     '<tbody>' +
                         exercises.map(function(ex) {
                             return '<tr>' +
@@ -958,7 +982,8 @@ function buildTemplateContent(tpl) {
                                 '<td>' + (ex.sets ? esc(ex.sets) : '—') + '</td>' +
                                 '<td>' + (ex.rest ? esc(ex.rest) : '—') + '</td>' +
                                 '<td class="cell-group">' + (ex.group ? esc(ex.group) : '—') + '</td>' +
-                                '<td class="cell-comment">' + (ex.comment ? esc(ex.comment) : '—') + '</td>' +
+'<td class="cell-num">' + (ex.num ? esc(ex.num) : '—') + '</td>' +
+'<td class="cell-comment">' + (ex.comment ? esc(ex.comment) : '—') + '</td>' +
                             '</tr>';
                         }).join('') +
                     '</tbody>' +
