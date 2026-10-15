@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои тренировки</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Прячем оверлей и его картинки до применения основного CSS */
+        #loginOverlay,
+        #loginOverlay .login-deco {
+            visibility: hidden;
+        }
+        #loginOverlay.ready,
+        #loginOverlay.ready .login-deco {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+        <!-- ========== ОВЕРЛЕЙ ВХОДА ========== -->
+    <div id="loginOverlay" class="login-overlay">
+        <img src="images/sport1.svg" alt="" class="login-deco login-deco-bl">
+        <img src="images/sport2.svg" alt="" class="login-deco login-deco-br">
+        <img src="images/sport3.svg" alt="" class="login-deco login-deco-tl">
+<img src="images/sport4.svg" alt="" class="login-deco login-deco-tr">
+<img src="images/sport5.svg" alt="" class="login-deco login-deco-tc">
+<img src="images/sport6.svg" alt="" class="login-deco login-deco-bc">
+<img src="images/sport7.svg" alt="" class="login-deco login-deco-ml">
+<img src="images/sport8.svg" alt="" class="login-deco login-deco-mr">
+        <div class="login-box">
+            <h1 class="login-title">Мои тренировки</h1>
+            <p class="login-subtitle">Войдите, чтобы продолжить</p>
+
+            <form id="loginForm">
+                <label>Логин
+                    <input type="text" id="loginInput" autocomplete="username" required>
+                </label>
+                <label>Пароль
+                    <input type="password" id="passwordInput" autocomplete="current-password" required>
+                </label>
+                <button type="submit">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Верхняя панель -->
+    <header class="topbar">
+        <button type="button" class="menu-btn" id="menuBtn" aria-label="Меню">☰</button>
+        <h1 id="pageTitle">Мои тренировки</h1>
+    </header>
+
+    <!-- Боковое меню -->
+        <nav class="side-menu hidden" id="sideMenu">
+        <button type="button" class="side-menu-close" id="closeMenu">✕</button>
+        <h2>Меню</h2>
+                 <ul>
+            <li><button type="button" class="menu-link active" data-page="workouts">Мои тренировки</button></li>
+            <li class="admin-only"><button type="button" class="menu-link" data-page="clients">Клиенты</button></li>
+            <li class="admin-only"><button type="button" class="menu-link" data-page="templates">Шаблоны тренировок</button></li>
+            <li class="admin-only"><button type="button" class="menu-link" data-page="profiles">Анкеты</button></li>
+            <li class="admin-only"><button type="button" class="menu-link" data-page="screening">Скрининг</button></li>
+            <li class="admin-only"><button type="button" class="menu-link" data-page="exercises">Упражнения</button></li>
+            <li class="client-only"><button type="button" class="menu-link" data-page="profile">Моя анкета</button></li>
+        </ul>
+        <button type="button" class="logout-btn" id="logoutBtn">Выйти</button>
+    </nav>
+
+        <div class="menu-overlay hidden" id="menuOverlay"></div>
+
+    <!-- ========== ПЛАШКА: КАЛЕНДАРЬ КЛИЕНТА (impersonation) ========== -->
+    <div id="impersonationBanner" class="impersonation-banner hidden">
+        <span class="impersonation-text">
+            Календарь клиента: <strong id="impersonationName">—</strong>
+        </span>
+        <button type="button" id="exitImpersonationBtn">Выйти из режима клиента</button>
+    </div>
+
+    <main>
+
+        <!-- ========== СТРАНИЦА: МОИ ТРЕНИРОВКИ ========== -->
+        <section id="page-workouts" class="page">
+
+                     <div class="calendar-row">
+                                <div class="card client-picker-card admin-only">
+                    <label class="client-picker-label" for="clientPickerSelect">Клиенты</label>
+                    <select id="clientPickerSelect">
+                        <!-- Заполняется JS -->
+                    </select>
+                </div>
+
+                <div class="card calendar-card">
+                    <div class="calendar-header">
+                        <button type="button" class="secondary" id="prevMonth">←</button>
+                        <h2 id="monthLabel">Октябрь 2026</h2>
+                        <button type="button" class="secondary" id="nextMonth">→</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-footer">
+                        <button type="button" class="secondary" id="todayBtn">Сегодня</button>
+                    </div>
+                </div>
+            </div>
+
+                   <div class="card admin-only">
+                <h2 id="selectedDateLabel">Выберите дату</h2>
+                <form id="workoutForm">
+                    <input type="text" id="workoutName" placeholder="Название тренировки" required>
+                    <button type="submit">Добавить тренировку</button>
+                    <button type="button" class="secondary" id="addFromTemplateBtn">Из шаблона</button>
+                    <button type="button" class="secondary" id="toggleDayOffBtn">Пометить выходным</button>
+                </form>
+            </div>
+
+            <!-- Заголовок для клиента, когда форма скрыта -->
+            <div class="card client-only" id="clientDateHeader">
+                <h2 id="clientSelectedDateLabel">Тренировки за …</h2>
+            </div>
+
+                        <section id="workoutsList"></section>
+
+                       <!-- ========== ОБРАТНАЯ СВЯЗЬ ПО ДНЮ ========== -->
+            <section id="dayFeedbackSection" class="hidden">
+                                <div class="day-feedback">
+                    <div class="day-feedback-header">
+                        <h3 id="dayFeedbackTitle">Обратная связь по тренировочному дню</h3>
+                        <span class="day-feedback-status" id="dayFeedbackStatus"></span>
+                    </div>
+                    <p class="day-feedback-hint" id="dayFeedbackHint">Опишите свои ощущения и оцените сложность дня от 1 до 10.</p>
+
+                    <label class="day-feedback-label">
+                        <span id="dayFeedbackLabel">Ваши ощущения</span>
+                        <textarea id="dayFeedbackText" rows="4"></textarea>
+                    </label>
+
+                    <div class="day-feedback-difficulty">
+                        <span class="day-feedback-difficulty-label">Сложность:</span>
+                        <div class="difficulty-buttons" id="difficultyButtons">
+                            <button type="button" data-value="1">1</button>
+                            <button type="button" data-value="2">2</button>
+                            <button type="button" data-value="3">3</button>
+                            <button type="button" data-value="4">4</button>
+                            <button type="button" data-value="5">5</button>
+                            <button type="button" data-value="6">6</button>
+                            <button type="button" data-value="7">7</button>
+                            <button type="button" data-value="8">8</button>
+                            <button type="button" data-value="9">9</button>
+                            <button type="button" data-value="10">10</button>
+                        </div>
+                    </div>
+
+                    <div class="day-feedback-actions">
+                        <button type="button" id="saveDayFeedback">Сохранить</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+                <!-- ========== СТРАНИЦА: СКРИНИНГ (для админа) ========== -->
+        <section id="page-screening" class="page hidden admin-only">
+            <div class="card">
+                <h2>Скрининг клиентов</h2>
+                <p class="hint">Выберите клиента из списка слева, чтобы заполнить или отредактировать его скрининг.</p>
+            </div>
+
+            <div class="profiles-layout">
+                <!-- Слева — список клиентов -->
+                <div class="profiles-list" id="screeningList">
+                    <!-- Заполняется JS -->
+                </div>
+
+                <!-- Справа — форма скрининга -->
+                <div class="profiles-content" id="screeningContent">
+                    <div class="card profiles-empty">
+                        <p class="hint">Выберите клиента из списка слева.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                <!-- ========== СТРАНИЦА: АНКЕТЫ (для админа) ========== -->
+        <section id="page-profiles" class="page hidden admin-only">
+            <div class="card">
+                <h2>Анкеты клиентов</h2>
+                <p class="hint">Выберите клиента из списка слева, чтобы посмотреть его анкету.</p>
+            </div>
+
+            <div class="profiles-layout">
+                <!-- Слева — список клиентов -->
+                <div class="profiles-list" id="profilesList">
+                    <!-- Заполняется JS -->
+                </div>
+
+                <!-- Справа — анкета выбранного клиента -->
+                <div class="profiles-content" id="profilesContent">
+                    <div class="card profiles-empty">
+                        <p class="hint">Выберите клиента из списка слева.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                <!-- ========== СТРАНИЦА: АНКЕТА ========== -->
+        <section id="page-profile" class="page hidden">
+            <div class="card">
+                <h2 id="profileTitle">Анкета</h2>
+                <p class="hint" id="profileHint">Заполните информацию о себе. Чем подробнее — тем точнее тренер подберёт программу.</p>
+            </div>
+
+            <form id="profileForm">
+
+                <!-- Блок 1: Общие данные -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Общие данные</h3>
+                    <div class="profile-grid">
+                        <label>Возраст
+                            <input type="number" id="pAge" min="1" max="120" placeholder="Лет">
+                        </label>
+                        <label>Рост
+                            <input type="number" id="pHeight" min="50" max="250" placeholder="см">
+                        </label>
+                        <label>Вес
+                            <input type="number" id="pWeight" min="20" max="300" placeholder="кг">
+                        </label>
+                        <label>Пол
+                            <select id="pGender">
+                                <option value="">— Не указан —</option>
+                                <option value="male">Мужской</option>
+                                <option value="female">Женский</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Блок 2: Здоровье -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Здоровье</h3>
+
+                    <label>История травм и диагнозы
+                        <textarea id="pInjuries" rows="3" placeholder="Перенесённые травмы, операции, установленные диагнозы, хронические заболевания. Например: разрыв мениска в 2019, грыжа L4-L5."></textarea>
+                    </label>
+
+                    <label>Противопоказания
+                        <textarea id="pContraindications" rows="3" placeholder="Что нельзя делать по рекомендации врача. Например: запрещены осевые нагрузки на позвоночник, нельзя бегать."></textarea>
+                    </label>
+
+                    <label>Боли и беспокойства сейчас
+                        <textarea id="pPain" rows="3" placeholder="Что беспокоит при движениях и нагрузке. Например: боль в правом колене при приседе, дискомфорт в пояснице после становой."></textarea>
+                    </label>
+                </div>
+
+                <!-- Блок 3: Образ жизни -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Образ жизни</h3>
+
+                                        <label>Характер работы
+                        <select id="pActivity">
+                            <option value="">— Не указано —</option>
+                            <option value="sedentary">Сидячая работа</option>
+                            <option value="active">Активная работа</option>
+                            <option value="heavy">Тяжёлый физический труд</option>
+                        </select>
+                    </label>
+
+                    <div class="profile-grid">
+                        <label>Сон
+                            <input type="number" id="pSleep" min="0" max="24" placeholder="Часов в сутки">
+                        </label>
+                        <label>Приёмов пищи
+                            <input type="number" id="pMeals" min="1" max="10" placeholder="В день">
+                        </label>
+                    </div>
+
+                    <label>Стрессовые факторы
+                        <textarea id="pStress" rows="2" placeholder="Что вызывает напряжение. Например: много работы, мало отдыха."></textarea>
+                    </label>
+                </div>
+
+                <!-- Блок 4: Цели -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Цели</h3>
+
+                    <label>Цели
+                        <textarea id="pGoals" rows="3" placeholder="Чего хочешь достичь. Например: сбросить 5 кг, подтягиваться 10 раз, набрать мышечную массу, улучшить осанку."></textarea>
+                    </label>
+
+                    <label>Период достижения
+                        <input type="text" id="pPeriod" placeholder="За какой срок, если есть. Например: за 3 месяца, к лету, без срока.">
+                    </label>
+                </div>
+
+                <!-- Блок 5: Условия для тренировок -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Условия для тренировок</h3>
+
+                    <label>Место тренировок
+                        <select id="pPlace">
+                            <option value="">— Не указано —</option>
+                            <option value="home">Дом</option>
+                            <option value="gym">Зал</option>
+                            <option value="street">Улица</option>
+                            <option value="mixed">Смешанно</option>
+                        </select>
+                    </label>
+
+                    <div class="profile-grid">
+                        <label>Тренировок в неделю
+                            <input type="number" id="pPerWeek" min="1" max="14" placeholder="Например, 3">
+                        </label>
+                                                <label>Длительность тренировки
+                            <select id="pDuration">
+                                <option value="">— Не указано —</option>
+                                <option value="30-60">30–60 минут</option>
+                                <option value="60-90">60–90 минут</option>
+                                <option value="90-120">90–120 минут</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <label>Инвентарь
+                        <textarea id="pEquipment" rows="3" placeholder="Если тренируетесь дома — укажите, какой инвентарь есть: гантели, турник, эспандеры, коврик и т.д. Если в зале — напишите «зал» или перечислите, чего не хватает."></textarea>
+                    </label>
+                </div>
+
+                <!-- Блок 6: Опыт тренировок -->
+                <div class="card profile-section">
+                    <h3 class="profile-section-title">Опыт тренировок</h3>
+
+                                       <label>Опыт
+                        <textarea id="pExperience" rows="3" placeholder="Чем занимался и сколько. Например: 2 года в зале (силовые). Укажите основные движения и рабочий вес."></textarea>
+                    </label>
+
+                    <label>Уровень
+                        <select id="pLevel">
+                            <option value="">— Не указано —</option>
+                            <option value="beginner">Новичок</option>
+                            <option value="intermediate">Средний</option>
+                            <option value="advanced">Продвинутый</option>
+                        </select>
+                    </label>
+                </div>
+
+                <!-- Кнопка -->
+                <div class="card profile-actions">
+                    <button type="submit" id="saveProfileBtn">Сохранить</button>
+                    <span class="profile-status" id="profileStatus"></span>
+                </div>
+
+            </form>
+        </section>
+                <!-- ========== СТРАНИЦА: ШАБЛОНЫ ТРЕНИРОВОК ========== -->
+        <section id="page-templates" class="page hidden admin-only">
+            <div class="card">
+                <h2>Шаблоны тренировок</h2>
+                <p class="hint">Хранилище готовых тренировок. Выберите клиента, чтобы увидеть его шаблоны.</p>
+            </div>
+
+            <div class="profiles-layout">
+                <!-- Слева — список клиентов -->
+                <div class="profiles-list" id="templatesList">
+                    <!-- Заполняется JS -->
+                </div>
+
+                <!-- Справа — карточки шаблонов -->
+                <div class="profiles-content" id="templatesContent">
+                    <div class="card profiles-empty">
+                        <p class="hint">Выберите клиента из списка слева.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========== СТРАНИЦА: КЛИЕНТЫ ========== -->
+        <section id="page-clients" class="page hidden admin-only">
+            <div class="card">
+                <h2>Клиенты</h2>
+                <p class="hint">Управление клиентами. Создание, доступ к календарю, сброс пароля.</p>
+                <button type="button" id="addClientBtn">+ Создать клиента</button>
+            </div>
+            <section id="clientsList"></section>
+        </section>
+
+          <!-- ========== СТРАНИЦА: УПРАЖНЕНИЯ ========== -->
+<section id="page-exercises" class="page hidden admin-only">
+    <div class="card">
+        <h2>Библиотека упражнений</h2>
+        <p class="hint">Справочник упражнений. Используется при составлении тренировок и программ.</p>
+        <button type="button" id="addExerciseToLibrary">+ Добавить упражнение</button>
+
+        <div class="library-filter">
+            <label for="libraryGroupFilter">Фильтр по группе:</label>
+            <select id="libraryGroupFilter">
+                <option value="">Все группы</option>
+            </select>
+        </div>
+    </div>
+    <section id="exercisesList"></section>
+</section>
+
+    
+
+    </main>
+
+    <!-- ========== МОДАЛКА: УПРАЖНЕНИЕ В ТРЕНИРОВКЕ ========== -->
+    <div id="exerciseModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Добавить упражнение</h2>
+            </div>
+            <div class="modal-body">
+                <div class="exercise-source-toggle">
+                    <button type="button" class="tab-btn active" data-source="library">Из библиотеки</button>
+                    <button type="button" class="tab-btn" data-source="custom">Своё</button>
+                </div>
+
+                <div id="libraryPicker">
+                    <input type="text" id="librarySearch" placeholder="Поиск упражнения...">
+                    <div id="libraryList" class="library-list"></div>
+                </div>
+
+                <div id="customForm" class="hidden">
+                    <label>Название упражнения
+                        <input type="text" id="fName">
+                    </label>
+                </div>
+
+                <form id="exerciseForm">
+                    <label>Темп
+                        <input type="text" id="fTempo" placeholder="Например, 2-0-2">
+                    </label>
+                    <label>Интенсивность (вес)
+                        <input type="text" id="fIntensity" placeholder="Например, 50 кг или 70%">
+                    </label>
+                    <label>Подходы / повторения
+                        <input type="text" id="fSets" placeholder="Например, 3×10, 8/8/6/4">
+                    </label>
+                    <label>Время отдыха
+                        <input type="text" id="fRest" placeholder="Например, 90 сек">
+                    </label>
+                    <label>Группа упражнений
+                        <input type="text" id="fGroup" placeholder="Например, Двусет А">
+                    </label>
+                    <label>Комментарий
+                        <textarea id="fComment" rows="3"></textarea>
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelExercise">Отмена</button>
+                <button type="submit" form="exerciseForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: КАРТОЧКА УПРАЖНЕНИЯ (просмотр) ========== -->
+    <div id="libraryViewModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="libraryViewTitle">Упражнение</h2>
+            </div>
+            <div class="modal-body">
+                <div id="libraryViewBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeLibraryView">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: ДОБАВИТЬ/РЕДАКТИРОВАТЬ УПРАЖНЕНИЕ В БИБЛИОТЕКЕ ========== -->
+    <div id="exerciseLibraryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exerciseLibraryTitle">Новое упражнение</h2>
+            </div>
+            <div class="modal-body">
+                <form id="exerciseLibraryForm">
+                    <label>Название
+                        <input type="text" id="libName" required>
+                    </label>
+                    <label>Порядок выполнения
+    <textarea id="libOrder" rows="3" placeholder="Например: 1. Подойти к штанге. 2. Взять хватом сверху. 3. Сделать вдох..."></textarea>
+</label>
+<label>Технические особенности
+    <textarea id="libTech" rows="3" placeholder="Например: Спина прямая, колени не выходят за носки, локти под 45°..."></textarea>
+</label>
+                    <label>Ссылка на видео (YouTube, Rutube, VK, mp4)
+                        <input type="url" id="libVideo" placeholder="https://...">
+                    </label>
+                    <label>Дополнительные ссылки
+    <textarea id="libLinks" rows="3" placeholder="По одной ссылке на строку. Например:&#10;https://disk.yandex.ru/...&#10;https://drive.google.com/..."></textarea>
+</label>
+                   <label>Вектор
+    <input type="text" id="libVector" placeholder="КД би, ТД уни">
+</label>
+                    <label>Группа упражнения
+    <input type="text" id="libGroup" list="libGroupList" placeholder="Начните вводить или выберите из списка" autocomplete="off">
+    <datalist id="libGroupList"></datalist>
+</label>
+                    <label>Инвентарь
+                        <input type="text" id="libEquipment" placeholder="Например, Штанга, Гантели">
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelExerciseLibrary">Отмена</button>
+                <button type="submit" form="exerciseLibraryForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: СОЗДАНИЕ/РЕДАКТИРОВАНИЕ ПРОГРАММЫ ========== -->
+    <div id="programModal" class="modal hidden">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h2 id="programModalTitle">Новая программа</h2>
+            </div>
+            <div class="modal-body">
+                <form id="programForm">
+                    <label>Название программы
+                        <input type="text" id="progName" required>
+                    </label>
+                    <label>Краткое описание
+                        <textarea id="progDescription" rows="2"></textarea>
+                    </label>
+                    <label>Длина программы (дней)
+                        <input type="number" id="progLength" min="1" max="60" value="7" required>
+                    </label>
+                    <button type="button" class="secondary" id="generateDaysBtn">Сгенерировать дни</button>
+                    <div id="programDaysEditor" class="program-days-editor"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelProgram">Отмена</button>
+                <button type="submit" form="programForm">Сохранить программу</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: ВЫБОР ТРЕНИРОВКИ ДЛЯ ДНЯ ПРОГРАММЫ ========== -->
+    <div id="pickWorkoutModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Выберите тренировку для дня</h2>
+            </div>
+            <div class="modal-body">
+                <div id="pickWorkoutList" class="library-list"></div>
+            </div>
+            <div class="modal-footer modal-footer-wrap">
+                <button type="button" id="createNewWorkoutInProgram">+ Создать новую тренировку</button>
+                <button type="button" class="secondary" id="pickDayOff">Сделать выходным</button>
+                <button type="button" class="secondary" id="pickClear">Очистить</button>
+                <button type="button" class="secondary" id="cancelPickWorkout">Отмена</button>
+            </div>
+        </div>
+    </div>
+        <!-- ========== МОДАЛКА: ВЫБОР ШАБЛОНА ========== -->
+    <div id="pickTemplateModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Выберите шаблон</h2>
+                <p class="modal-subtitle" id="pickTemplateSubtitle">—</p>
+            </div>
+            <div class="modal-body">
+                <div id="pickTemplateList" class="library-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelPickTemplate">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- ========== МОДАЛКА: ДУБЛЬ ШАБЛОНА ========== -->
+    <div id="templateDupModal" class="modal hidden">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h2>Такой шаблон уже есть</h2>
+            </div>
+            <div class="modal-body">
+                <p id="templateDupText">Шаблон с таким названием уже существует. Что делать?</p>
+                <div class="client-actions-list" style="margin-top: 16px;">
+                    <button type="button" class="action-btn" id="templateDupOverwrite">
+                        Перезаписать существующий
+                    </button>
+                    <button type="button" class="action-btn" id="templateDupAddNew">
+                        Добавить ещё один шаблон
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="templateDupCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- ========== МОДАЛКА: ДЕЙСТВИЯ С КЛИЕНТОМ ========== -->
+    <div id="clientActionsModal" class="modal hidden">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h2 id="clientActionsTitle">Действия с клиентом</h2>
+            </div>
+            <div class="modal-body">
+                                 <div class="client-actions-list">
+                    <button type="button" class="action-btn" id="actionOpenProfile">
+                        Посмотреть анкету
+                    </button>
+                    <button type="button" class="action-btn" id="actionOpenScreening">
+                        Посмотреть скрининг
+                    </button>
+                    <button type="button" class="action-btn" id="actionCopyCreds">
+                        Скопировать логин и пароль
+                    </button>
+                    <button type="button" class="action-btn" id="actionShowCreds">
+                        Показать логин и пароль
+                    </button>
+                    <button type="button" class="action-btn" id="actionEditClient">
+                        Изменить имя / заметку
+                    </button>
+                    <button type="button" class="action-btn" id="actionResetPassword">
+                        Сбросить пароль
+                    </button>
+                    <button type="button" class="action-btn danger" id="actionDeleteClient">
+                        Удалить клиента
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="closeClientActions">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: СОЗДАНИЕ/РЕДАКТИРОВАНИЕ КЛИЕНТА ========== -->
+    <div id="clientModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="clientModalTitle">Новый клиент</h2>
+            </div>
+            <div class="modal-body">
+                <form id="clientForm">
+                    <label>Имя клиента
+                        <input type="text" id="clientName" required placeholder="Например, Иван Петров">
+                    </label>
+
+                    <div id="clientLoginFields">
+                        <label>Логин
+                            <input type="text" id="clientLogin" placeholder="Латиница, цифры, без пробелов">
+                        </label>
+
+                                                <label>Пароль
+                            <div class="password-row">
+                                <input type="text" id="clientPassword" placeholder="Пусто — сгенерируется автоматически">
+                                <button type="button" class="secondary" id="generatePasswordBtn" title="Сгенерировать пароль"></button>
+                            </div>
+                        </label>
+                    </div>
+
+                    <label>Заметка (только для админа)
+                        <textarea id="clientNote" rows="3" placeholder="Например: травма колена, работает до 18:00"></textarea>
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelClient">Отмена</button>
+                <button type="submit" form="clientForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: СОЗДАНИЕ ТРЕНИРОВКИ ВНУТРИ ПРОГРАММЫ ========== -->
+    <div id="newProgramWorkoutModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Новая тренировка в программе</h2>
+            </div>
+            <div class="modal-body">
+                <form id="newProgramWorkoutForm">
+                    <label>Название тренировки
+                        <input type="text" id="newProgWorkoutName" required>
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelNewProgramWorkout">Отмена</button>
+                <button type="submit" form="newProgramWorkoutForm">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== МОДАЛКА: ПРОСМОТР ДНЯ ПРОГРАММЫ ========== -->
+    <div id="programDayViewModal" class="modal hidden">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h2 id="programDayViewTitle">День 1</h2>
+            </div>
+            <div class="modal-body">
+                <div id="programDayViewBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeProgramDayView">Закрыть</button>
+            </div>
+        </div>
+    </div>
+      <!-- ========== МОДАЛКА: ОТЧЁТ ПО УПРАЖНЕНИЮ ========== -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Отчёт по упражнению</h2>
+                <p id="reportModalTitle" class="modal-subtitle">—</p>
+            </div>
+                        <div class="modal-body">
+                <form id="reportForm">
+                    <label>
+                        <span id="reportLabel">Отчёт</span>
+                        <textarea id="reportText" rows="10"></textarea>
+                    </label>
+                </form>
+            </div>
+                        <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelReport">Отмена</button>
+                <button type="submit" form="reportForm" id="saveReport">Сохранить</button>
+            </div>
+        </div>
+    </div>
+        <!-- ========== МОДАЛКА: ПОДТВЕРЖДЕНИЕ ВЫХОДА ========== -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h2 id="confirmModalTitle">Отменить изменения?</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalText">Все несохранённые данные будут потеряны.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="confirmModalNo">Отмена</button>
+                <button type="button" class="danger" id="confirmModalYes">Да</button>
+            </div>
+        </div>
+    </div>
+        <!-- ========== МОДАЛКА: ИНФОРМАЦИОННОЕ СООБЩЕНИЕ ========== -->
+    <div id="alertModal" class="modal hidden">
+        <div class="modal-content modal-confirm">
+            <div class="modal-body">
+                <p id="alertModalText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="alertModalOk">ОК</button>
+            </div>
+        </div>
+    </div>
+
+        <script src="icons.js"></script>
+    <script src="app-1-core.js"></script>
+    <script src="app-2-workouts.js"></script>
+    <script src="app-3-library-programs.js"></script>
+</body>
+</html>

@@ -1,0 +1,3762 @@
+/* ===== Базовые настройки ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f7f3ea;
+    background-image:
+        repeating-linear-gradient(45deg, rgba(120,100,70,0.03) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(-45deg, rgba(120,100,70,0.025) 0 1px, transparent 1px 5px),
+        radial-gradient(circle at 20% 30%, rgba(120,100,70,0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(120,100,70,0.05) 0%, transparent 40%);
+    color: #2b2b2b;
+    padding: 70px 24px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+/* ===== Верхняя панель ===== */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #2f6b4f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 14px;
+    z-index: 90;
+    box-shadow: 0 2px 8px rgba(47, 107, 79, 0.25);
+}
+
+.topbar h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    padding: 6px 10px;
+    cursor: pointer;
+    box-shadow: none;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: none;
+}
+
+/* ===== Боковое меню ===== */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    background: #fffdf8;
+    z-index: 120;
+    padding: 20px;
+    box-shadow: 4px 0 20px rgba(40, 30, 15, 0.15);
+    transform: translateX(0);
+    transition: transform 0.25s ease;
+    border-right: 1px solid #ece4d4;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu.hidden {
+    transform: translateX(-100%);
+    display: block !important;
+    pointer-events: none;
+}
+
+.side-menu-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    color: #4a4232;
+    font-size: 18px;
+    padding: 4px 10px;
+    box-shadow: none;
+    border-radius: 6px;
+}
+
+.side-menu-close:hover {
+    background: #ece4d4;
+    box-shadow: none;
+}
+
+.side-menu h2 {
+    color: #2f6b4f;
+    font-size: 16px;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.side-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.menu-link {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: #4a4232;
+    border: none;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.menu-link:hover {
+    background: #f2f7f1;
+    color: #2f6b4f;
+    box-shadow: none;
+}
+
+.menu-link.active {
+    background: #2f6b4f;
+    color: #fff;
+    box-shadow: none;
+}
+
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 30, 15, 0.45);
+    z-index: 110;
+    transition: opacity 0.25s;
+}
+
+/* ===== Страницы ===== */
+.page {
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Карточки (общее) ===== */
+.card {
+    background: #fffdf8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    border: 1px solid #ece4d4;
+}
+
+h2 {
+    font-size: 19px;
+    margin-bottom: 12px;
+    color: #2f6b4f;
+    font-weight: 600;
+}
+
+.hint {
+    font-size: 13px;
+    color: #8a8067;
+    margin-bottom: 14px;
+    line-height: 1.5;
+}
+
+/* ===== Панели управления на всех страницах ===== */
+/* Одинаковый стиль для панели «Тренировки за дату», «Библиотека упражнений», «Библиотека программ» */
+.card:has(#workoutForm),
+.card:has(#addExerciseToLibrary),
+.card:has(#addProgramBtn) {
+    background: #fdfaf1;
+    border-left: 3px solid #2f6b4f;
+    padding: 20px 22px;
+}
+
+.card:has(#workoutForm) h2,
+.card:has(#addExerciseToLibrary) h2,
+.card:has(#addProgramBtn) h2 {
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed #d3c7a8;
+}
+
+/* ===== Календарь ===== */
+.calendar-card {
+    padding: 14px 16px 16px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.calendar-header h2 {
+    margin: 0;
+    font-size: 15px;
+    color: #2f6b4f;
+}
+
+.calendar-header button {
+    padding: 4px 10px;
+    font-size: 14px;
+    min-height: 30px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+}
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #8a8067;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 4px 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.calendar-day {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    background: transparent;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+    padding: 1px;
+    color: #4a4232;
+}
+
+.calendar-day:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+}
+
+.calendar-day.other-month {
+    color: #c0b8a2;
+    background: transparent;
+}
+
+.calendar-day.other-month:hover {
+    background: transparent;
+    border-color: transparent;
+    cursor: default;
+}
+
+.calendar-day.today {
+    border-color: #2f6b4f;
+    color: #2f6b4f;
+    font-weight: 700;
+}
+
+.calendar-day.has-workouts {
+    background: #e5f0e6;
+}
+
+.calendar-day.today.has-workouts {
+    background: #e5f0e6;
+    border-color: #2f6b4f;
+    color: #2f6b4f;
+    font-weight: 700;
+}
+
+.calendar-day.selected {
+    background: #2f6b4f !important;
+    color: #fff !important;
+    font-weight: 700;
+    border-color: #2f6b4f;
+}
+
+.calendar-day .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    margin-top: 1px;
+    opacity: 0;
+}
+
+.calendar-day.has-workouts .dot {
+    opacity: 1;
+    background: #2f6b4f;
+}
+
+.calendar-day.selected.has-workouts .dot {
+    background: #fff;
+    opacity: 1;
+}
+
+.calendar-footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.calendar-footer button {
+    font-size: 12px;
+    padding: 5px 14px;
+    min-height: 28px;
+}
+
+/* ===== Формы ===== */
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+input, textarea {
+    flex: 1 1 180px;
+    padding: 11px 13px;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #ffffff;
+    color: #2b2b2b;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+textarea { resize: vertical; }
+
+/* ===== Кнопки ===== */
+button {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 6px;
+    background: #2f6b4f;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    box-shadow: 0 2px 6px rgba(47, 107, 79, 0.25);
+    font-family: inherit;
+}
+
+button:hover {
+    background: #265741;
+    box-shadow: 0 4px 10px rgba(47, 107, 79, 0.35);
+}
+
+button:active {
+    background: #1e4635;
+    transform: translateY(1px);
+}
+
+button.danger {
+    background: #a94442;
+    box-shadow: 0 2px 6px rgba(169, 68, 66, 0.25);
+}
+button.danger:hover { background: #8b3634; }
+button.danger:active { background: #6f2a28; }
+
+button.secondary {
+    background: #e8dfc9;
+    color: #4a4232;
+    box-shadow: 0 2px 6px rgba(120, 100, 70, 0.15);
+}
+button.secondary:hover { background: #dcd0b3; }
+button.secondary:active { background: #cbbf9f; }
+
+button:disabled,
+button[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ===== Тренировка (карточка) ===== */
+.workout {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 10px rgba(80, 60, 30, 0.04),
+        0 14px 28px rgba(80, 60, 30, 0.05);
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #ece4d4;
+}
+
+.workout-header h3 {
+    font-size: 22px;
+    color: #2f6b4f;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.workout-header .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ===== Блоки внутри тренировки ===== */
+.block {
+    border: 1px solid #ece4d4;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+    background: #fbf6e9;
+    position: relative;
+}
+
+.block:last-child { margin-bottom: 0; }
+
+.block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.block-header h4 {
+    font-size: 14px;
+    color: #2f6b4f;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.block-header h4::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    display: inline-block;
+}
+
+.block-header .block-actions { display: flex; gap: 8px; }
+
+.block.optional {
+    background: #fdfaf1;
+    border-style: dashed;
+    border-color: #cbbf9f;
+}
+
+.block.optional .block-header h4::before {
+    background: #cbbf9f;
+}
+
+.block.optional:not(.collapsed-block) .block-header h4::before {
+    background: #2f6b4f;
+}
+
+/* Свёрнутый блок */
+.block.collapsed-block {
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.block.collapsed-block .block-body {
+    display: none !important;
+}
+
+.block.collapsed-block .block-header {
+    margin-bottom: 0;
+}
+
+.block.collapsed-block .block-header h4::before {
+    background: #cbbf9f;
+}
+
+/* ===== Таблица упражнений ===== */
+.exercise-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid #ddd2b8;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fffdf8;
+}
+
+.exercise-table thead th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #e8dfc9;
+    color: #3a3425;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-right: 1px solid #ddd2b8;
+    border-bottom: 2px solid #d3c7a8;
+    white-space: nowrap;
+}
+
+.exercise-table thead th:last-child {
+    border-right: none;
+    text-align: right;
+}
+
+.exercise-table tbody td {
+    padding: 10px 12px;
+    border-right: 1px solid #ece4d4;
+    border-bottom: 1px solid #ece4d4;
+    vertical-align: top;
+    color: #333;
+}
+
+.exercise-table tbody td:last-child {
+    border-right: none;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.exercise-table tbody tr:last-child td { border-bottom: none; }
+
+.exercise-table .cell-name {
+    font-weight: 600;
+    color: #2f6b4f;
+    min-width: 160px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: rgba(47, 107, 79, 0.3);
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+}
+
+.exercise-table .cell-name:hover {
+    color: #1e4635;
+    text-decoration-color: #2f6b4f;
+}
+
+.exercise-table .cell-group { font-weight: 600; color: #2f6b4f; white-space: nowrap; }
+.exercise-table .cell-comment {
+    color: #5a5344;
+    font-size: 13px;
+    max-width: 220px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.exercise-table .cell-empty { color: #b8ae95; }
+.exercise-table .cell-actions button {
+    padding: 5px 10px;
+    font-size: 13px;
+    margin-left: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.exercise-table .cell-actions button svg {
+    display: block;
+}
+
+/* Цвета для групп */
+.exercise-table tr[data-group-color="0"] { background: #f4faf5; }
+.exercise-table tr[data-group-color="1"] { background: #faf7ef; }
+.exercise-table tr[data-group-color="2"] { background: #f2f7fa; }
+.exercise-table tr[data-group-color="3"] { background: #f7f3fa; }
+.exercise-table tr[data-group-color="4"] { background: #faf3f0; }
+.exercise-table tr[data-group-color="5"] { background: #f4faf8; }
+
+.no-exercises {
+    color: #8a8067;
+    font-size: 14px;
+    padding: 12px 0;
+    font-style: italic;
+}
+
+/* ===== Библиотека упражнений / список для выбора ===== */
+.library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.library-item {
+    background: #fdfaf1;
+    border: 1px solid #e3d9c2;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.library-item:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+}
+
+.library-item-title {
+    font-weight: 600;
+    color: #2f6b4f;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.library-item-meta {
+    font-size: 12px;
+    color: #8a8067;
+}
+
+/* ===== Карточка упражнения (страница Упражнения) ===== */
+.exercise-card {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.exercise-card-media {
+    width: 200px;
+    height: 130px;
+    border-radius: 8px;
+    background: #ece4d4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a8067;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.exercise-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.exercise-card h3 {
+    color: #2f6b4f;
+    font-size: 17px;
+    margin-bottom: 6px;
+}
+
+.exercise-card .meta {
+    font-size: 12px;
+    color: #8a8067;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.exercise-card .meta span::before {
+    content: "•";
+    margin-right: 6px;
+    color: #cbbf9f;
+}
+
+.exercise-card .meta span:first-child::before { display: none; }
+
+.exercise-card .description {
+    font-size: 13px;
+    color: #5a5344;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    margin-bottom: 8px;
+}
+
+.exercise-card .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.exercise-card .actions button {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+/* ===== Карточка программы (страница Программы) ===== */
+.program-card {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 10px rgba(80, 60, 30, 0.04),
+        0 14px 28px rgba(80, 60, 30, 0.05);
+}
+
+.program-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #ece4d4;
+}
+
+.program-card-header h3 {
+    color: #2f6b4f;
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.program-card-header .meta {
+    font-size: 13px;
+    color: #8a8067;
+}
+
+.program-card-header .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.program-card .description {
+    font-size: 14px;
+    color: #5a5344;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+}
+
+/* Сетка кнопочек-дней внутри карточки программы */
+.program-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.program-day-btn {
+    background: #fdfaf1;
+    border: 1px solid #d8cfba;
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    color: #4a4232;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: none;
+    transition: background 0.15s, border-color 0.15s;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+.program-day-btn:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+    box-shadow: none;
+}
+
+.program-day-btn .day-num {
+    font-weight: 700;
+    color:  #1f1f1f;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.program-day-btn .day-content {
+    color: #5a5344;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.program-day-btn .day-content.day-workout { color: #2f6b4f; font-weight: 600; }
+.program-day-btn .day-content.rest { color: #a94442; font-weight: 600; }
+.program-day-btn .day-content.empty { color: #b8ae95; font-style: italic; }
+
+.program-day-btn.disabled,
+.program-day-btn[disabled] {
+    cursor: default;
+    background: #f4f0e6;
+    border-color: #e3d9c2;
+    opacity: 0.85;
+}
+
+.program-day-btn.disabled:hover,
+.program-day-btn[disabled]:hover {
+    background: #f4f0e6;
+    border-color: #e3d9c2;
+}
+
+/* Редактор дней программы (внутри модалки программы) */
+.program-days-editor {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.program-days-editor .program-day-btn {
+    min-height: 70px;
+}
+
+/* ===== Модалки ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 30, 15, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 600;
+    padding: 20px;
+    animation: modalFadeIn 0.18s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: #fffdf8;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+        box-shadow:
+        0 2px 8px rgba(40, 30, 15, 0.10),
+        0 12px 32px rgba(40, 30, 15, 0.18),
+        0 24px 64px rgba(40, 30, 15, 0.15);
+    border: 1px solid #ece4d4;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalContentIn 0.2s ease-out;
+}
+
+@keyframes modalContentIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-wide { max-width: 720px; }
+
+/* Шапка модалки — фиксированная */
+.modal-header {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid #ece4d4;
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2f6b4f;
+    font-size: 18px;
+}
+
+.modal-header .modal-subtitle {
+    margin: 4px 0 0 0;
+    color: #5a5344;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Тело модалки — скроллится */
+.modal-body {
+    padding: 18px 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Подвал модалки — фиксированный */
+.modal-footer {
+    padding: 14px 24px 20px;
+    border-top: 1px solid #ece4d4;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    background: #fffdf8;
+}
+
+.modal-footer.modal-footer-wrap {
+    flex-wrap: wrap;
+}
+
+.modal-content form { flex-direction: column; }
+
+.modal-content label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: #4a4232;
+    margin-bottom: 10px;
+    width: 100%;
+    font-weight: 500;
+}
+
+.modal-content input,
+.modal-content textarea { width: 100%; }
+
+/* input в модалках — фиксированной высоты, не растягивается */
+.modal-content input {
+    flex: 0 0 auto;
+    height: 42px;
+}
+
+
+/* ===== Переключатель источника упражнения ===== */
+.exercise-source-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.tab-btn {
+    background: #fffdf8;
+    color: #4a4232;
+    border: none;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: none;
+    border-radius: 0;
+    transition: background 0.15s, color 0.15s;
+}
+
+.tab-btn:hover { background: #f2f7f1; box-shadow: none; }
+
+.tab-btn.active {
+    background: #2f6b4f;
+    color: #fff;
+    box-shadow: none;
+}
+
+/* ===== Медиа в карточке упражнения ===== */
+#libraryViewBody iframe,
+#libraryViewBody video {
+    width: 100%;
+    max-height: 320px;
+    border-radius: 8px;
+    background: #000;
+    border: none;
+    margin-bottom: 12px;
+}
+
+#libraryViewBody img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    background: #f4f0e6;
+}
+
+#libraryViewBody .meta {
+    font-size: 13px;
+    color: #8a8067;
+    margin-bottom: 10px;
+}
+
+#libraryViewBody .description {
+    font-size: 14px;
+    color: #4a4232;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* ===== Модалка просмотра дня программы ===== */
+#programDayViewBody .view-workout {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+#programDayViewBody .view-workout:last-child { margin-bottom: 0; }
+
+#programDayViewBody .view-block {
+    background: #fbf6e9;
+    border: 1px solid #ece4d4;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+#programDayViewBody .view-block:last-child { margin-bottom: 0; }
+
+#programDayViewBody .view-block-title {
+    font-size: 12px;
+    color: #2f6b4f;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#programDayViewBody .view-block-title::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    display: inline-block;
+}
+
+#programDayViewBody .view-empty {
+    color: #8a8067;
+    font-size: 13px;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+/* ===== Мобильная адаптация ===== */
+@media (max-width: 700px) {
+
+    body {
+        padding: 66px 10px 14px;
+        font-size: 15px;
+    }
+
+    h2 { font-size: 17px; }
+
+    .topbar h1 { font-size: 16px; }
+
+    .card {
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+    }
+
+    .card:has(#workoutForm),
+    .card:has(#addExerciseToLibrary),
+    .card:has(#addProgramBtn) {
+        padding: 14px;
+        border-left-width: 3px;
+    }
+
+    .calendar-card {
+        padding: 12px 12px 14px;
+        max-width: 100%;
+    }
+
+    .calendar-header h2 { font-size: 14px; }
+    .calendar-header button { padding: 4px 10px; font-size: 13px; min-height: 30px; }
+    .calendar-day { font-size: 11px; border-radius: 5px; }
+    .calendar-weekdays span { font-size: 9px; padding: 3px 0; }
+
+    button {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+
+    form { flex-direction: column; }
+
+    input, textarea {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    /* Тренировка */
+    .workout {
+        padding: 16px 14px;
+        margin-bottom: 20px;
+        border-width: 3px;
+    }
+
+    .workout-header h3 { font-size: 18px; }
+    .workout-header .actions { width: 100%; }
+    .workout-header .actions button { flex: 1; }
+
+    /* Блоки */
+    .block { padding: 12px; }
+    .block-header h4 { font-size: 12px; }
+    .block-header .block-actions { width: 100%; flex-wrap: wrap; }
+    .block-header .block-actions button {
+        flex: 1 1 auto;
+        font-size: 12px;
+        padding: 8px 10px;
+        min-height: 36px;
+    }
+
+    /* Таблица → карточки */
+    .exercise-table,
+    .exercise-table thead,
+    .exercise-table tbody,
+    .exercise-table tr,
+    .exercise-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .exercise-table { border: none; background: transparent; }
+    .exercise-table thead { display: none; }
+
+    .exercise-table tbody tr {
+        background: #fffdf8;
+        border: 1px solid #ddd2b8;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 6px rgba(80, 60, 30, 0.05);
+    }
+
+    .exercise-table tbody tr[data-group-color="0"] { background: #f4faf5; }
+    .exercise-table tbody tr[data-group-color="1"] { background: #faf7ef; }
+    .exercise-table tbody tr[data-group-color="2"] { background: #f2f7fa; }
+    .exercise-table tbody tr[data-group-color="3"] { background: #f7f3fa; }
+    .exercise-table tbody tr[data-group-color="4"] { background: #faf3f0; }
+    .exercise-table tbody tr[data-group-color="5"] { background: #f4faf8; }
+
+    .exercise-table tbody td {
+        border: none;
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .exercise-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #8a8067;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        flex-shrink: 0;
+        min-width: 85px;
+    }
+
+    .exercise-table .cell-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #2f6b4f;
+        border-bottom: 1px dashed #e3d9c2;
+        padding-bottom: 8px !important;
+        margin-bottom: 6px;
+        text-decoration: none;
+    }
+
+    .exercise-table .cell-name::before { display: none; }
+
+    .exercise-table .cell-actions {
+        text-align: right;
+        border-top: 1px dashed #e3d9c2;
+        padding-top: 8px !important;
+        margin-top: 6px;
+        justify-content: flex-end;
+    }
+        body.client-mode .exercise-table .cell-actions {
+        display: none !important;
+    }
+
+    .exercise-table .cell-actions::before { display: none; }
+
+    .exercise-table .cell-actions button {
+        padding: 8px 14px;
+        font-size: 13px;
+        min-height: 36px;
+    }
+
+    /* Карточка упражнения */
+    .exercise-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .exercise-card-media {
+        width: 100%;
+        height: 180px;
+    }
+
+    .exercise-card .actions {
+        flex-direction: row;
+    }
+
+    .exercise-card .actions button { flex: 1; }
+
+        /* Модалки */
+    .modal { padding: 10px; }
+    .modal-content { padding: 16px; max-width: 100%; }
+    .modal-actions { flex-direction: column; }
+    .modal-wide { max-width: 100%; }
+
+    /* Сетка дней программы */
+    .program-days-grid {
+        grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    }
+
+    .program-days-editor {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    }
+
+    .program-day-btn {
+        padding: 10px 6px;
+        min-height: 60px;
+        font-size: 11px;
+    }
+
+    /* Карточка программы */
+    .program-card {
+        padding: 16px 14px;
+        margin-bottom: 20px;
+        border-width: 3px;
+    }
+
+    .program-card-header h3 { font-size: 18px; }
+    .program-card-header .actions { width: 100%; }
+    .program-card-header .actions button { flex: 1; }
+
+    .side-menu { width: 240px; }
+    .library-list { max-height: 240px; }
+}
+/* ===== Модалка просмотра дня программы — шире ===== */
+#programDayViewModal .modal-content {
+    max-width: 1000px;
+}
+
+/* ===== Кнопочки-дни в карточке программы ===== */
+.program-day-btn {
+    /* базовая рамка — тонкая и мягкая */
+    border: 1px solid #e3d9c2;
+    background: #fdfaf1;
+}
+
+/* Если кнопка disabled (пусто/выходной) — совсем светлая */
+.program-day-btn[disabled] {
+    border-color: #ece4d4;
+    background: #faf6ea;
+}
+
+/* Внутри модалки просмотра дня — таблица должна влезать в ширину */
+#programDayViewBody .exercise-table {
+    font-size: 13px;
+}
+
+#programDayViewBody .view-workout {
+    padding: 20px;
+}
+
+#programDayViewBody .view-block {
+    padding: 14px;
+}
+/* ===== Кнопка дня с тренировкой — акцент ===== */
+.program-day-btn:not([disabled]) {
+    background: #eef6ef;
+    border-color: #dbe9dc;
+}
+
+.program-day-btn:not([disabled]):hover {
+    background: #e0efe2;
+    border-color: #c8ddc8;
+}
+
+/* Точка перед названием тренировки */
+.program-day-btn .day-content.day-workout::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+/* ===== Мини-модалка подтверждения ===== */
+.modal-confirm {
+    max-width: 400px;
+}
+
+.modal-confirm .modal-body {
+    padding: 18px 24px;
+}
+
+.modal-confirm .modal-body p {
+    font-size: 14px;
+    color: #4a4232;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.modal-confirm .modal-footer {
+    padding: 14px 24px 20px;
+}
+/* ===== Модалка alert — только с одной кнопкой ===== */
+#alertModal .modal-body {
+    padding: 22px 24px 10px;
+}
+
+#alertModal .modal-body p {
+    font-size: 15px;
+    color: #2b2b2b;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+}
+
+/* ===== Модалка confirm — общий стиль ===== */
+#confirmModal .modal-body p {
+    font-size: 14px;
+    color: #4a4232;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+}
+/* ===== Дополнительные ссылки в карточке упражнения ===== */
+.extra-links {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #4a4232;
+}
+
+.extra-links strong {
+    color: #2f6b4f;
+    font-weight: 600;
+}
+
+.extra-links ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.extra-links li {
+    padding-left: 0;
+    word-break: break-all;
+}
+
+.extra-links a {
+    color: #2563eb;
+    text-decoration: underline;
+    text-decoration-color: rgba(37, 99, 235, 0.3);
+    text-underline-offset: 3px;
+    transition: color 0.15s;
+}
+
+.extra-links a:hover {
+    color: #1d4ed8;
+    text-decoration-color: #2563eb;
+}
+/* ===== Отступы между блоками в модалке просмотра ===== */
+#libraryViewBody .extra-links {
+    margin-bottom: 20px;
+}
+
+#libraryViewBody .description {
+    margin-bottom: 16px;
+}
+
+#libraryViewBody .description:last-child {
+    margin-bottom: 0;
+}
+/* ===== Колонка "Отчёт" в таблице упражнений ===== */
+.exercise-table .cell-report {
+    min-width: 140px;
+    max-width: 180px;
+    cursor: pointer;
+}
+
+.exercise-table .cell-report:hover {
+    background: #f2f7f1;
+}
+
+.report-preview {
+    color: #5a5344;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.report-empty {
+    color: #2f6b4f;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgba(47, 107, 79, 0.3);
+    text-underline-offset: 3px;
+}
+
+.report-empty:hover {
+    text-decoration-color: #2f6b4f;
+}
+
+/* В модалке просмотра дня программы — отчёт не показываем */
+#programDayViewBody .cell-report {
+    display: none;
+}
+/* ===== Обратная связь по дню ===== */
+.day-feedback {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 28px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 10px rgba(80, 60, 30, 0.04),
+        0 14px 28px rgba(80, 60, 30, 0.05);
+}
+
+.day-feedback h3 {
+    color: #2f6b4f;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.day-feedback-hint {
+    font-size: 13px;
+    color: #8a8067;
+    margin-bottom: 16px;
+}
+
+.day-feedback-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: #4a4232;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.day-feedback-label textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #ffffff;
+    color: #2b2b2b;
+    resize: vertical;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.day-feedback-label textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* Оценка сложности */
+.day-feedback-difficulty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.day-feedback-difficulty-label {
+    font-size: 13px;
+    color: #4a4232;
+    font-weight: 500;
+}
+/* ===== Обратная связь — режим просмотра (для админа) ===== */
+.day-feedback.readonly-mode {
+    border-color: #cbbf9f;
+}
+
+.day-feedback.readonly-mode textarea {
+    background: #f7f3ea;
+    color: #5a5344;
+    cursor: default;
+}
+
+.day-feedback.readonly-mode textarea:focus {
+    border-color: #d8cfba;
+    box-shadow: none;
+}
+
+.day-feedback.readonly-mode .difficulty-buttons button {
+    opacity: 0.65;
+    cursor: default;
+}
+
+.day-feedback.readonly-mode .day-feedback-status {
+    display: none;
+}
+/* ===== Модалка отчёта — режим просмотра ===== */
+.modal-readonly textarea {
+    background: #f7f3ea;
+    color: #5a5344;
+    cursor: default;
+}
+
+.modal-readonly textarea:focus {
+    border-color: #d8cfba;
+    box-shadow: none;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.difficulty-buttons button {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    background: #fdfaf1;
+    color: #4a4232;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.difficulty-buttons button:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+    box-shadow: none;
+    color: #2f6b4f;
+}
+
+.difficulty-buttons button.active {
+    background: #2f6b4f;
+    border-color: #2f6b4f;
+    color: #fff;
+    box-shadow: none;
+}
+
+/* Кнопка сохранения */
+.day-feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.day-feedback-actions button {
+    padding: 11px 22px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .day-feedback {
+        padding: 16px 14px;
+        margin-top: 20px;
+    }
+
+    .day-feedback h3 {
+        font-size: 16px;
+    }
+
+    .difficulty-buttons button {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+    }
+
+    .day-feedback-actions button {
+        width: 100%;
+    }
+}
+/* ===== Заголовок блока обратной связи с индикатором ===== */
+.day-feedback-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.day-feedback-header h3 {
+    margin: 0;
+}
+
+.day-feedback-status {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+/* Сохранено — зелёная плашка */
+.day-feedback-status.saved {
+    background: #e5f0e6;
+    color: #2f6b4f;
+}
+
+/* Не сохранено — серо-бежевая плашка */
+.day-feedback-status.unsaved {
+    background: #f4f0e6;
+    color: #8a8067;
+}
+
+/* Скрыть, если статус пустой */
+.day-feedback-status:empty {
+    display: none;
+}
+
+/* Кнопка "Сохранено" — временное состояние */
+#saveDayFeedback.saved {
+    background: #2f6b4f;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(47, 107, 79, 0.35);
+}
+/* ================================================================
+   ОВЕРЛЕЙ ВХОДА
+   ================================================================ */
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    background: #f7f3ea;
+    background-image:
+        repeating-linear-gradient(45deg, rgba(120,100,70,0.03) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(-45deg, rgba(120,100,70,0.025) 0 1px, transparent 1px 5px),
+        radial-gradient(circle at 20% 30%, rgba(120,100,70,0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(120,100,70,0.05) 0%, transparent 40%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 500;
+}
+
+.login-overlay.hidden {
+    display: none;
+}
+
+.login-box {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-top: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 32px 28px 28px;
+    width: 100%;
+    max-width: 400px;
+        box-shadow:
+        0 2px 8px rgba(40, 30, 15, 0.08),
+        0 12px 32px rgba(40, 30, 15, 0.15),
+        0 24px 64px rgba(40, 30, 15, 0.12);
+}
+
+.login-title {
+    color: #2f6b4f;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+}
+
+.login-subtitle {
+    color: #8a8067;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.login-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.login-box label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    color: #4a4232;
+    font-weight: 500;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #fffdf8;
+    color: #2b2b2b;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    height: 38px;
+    box-sizing: border-box;
+}
+
+.login-box input:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.login-box button[type="submit"] {
+    margin-top: 6px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .login-box {
+        padding: 24px 20px 20px;
+        border-width: 3px;
+    }
+
+    .login-title {
+        font-size: 20px;
+    }
+
+    .login-subtitle {
+        font-size: 12px;
+        margin-bottom: 20px;
+    }
+
+    .login-box input {
+        font-size: 16px; /* предотвращает зум на iOS */
+    }
+}
+/* Перебиваем flex-basis у полей логина */
+.login-box input {
+    flex: 0 0 auto;
+    height: 42px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+}
+/* ===== Выходной день в календаре ===== */
+.calendar-day.has-dayoff {
+    background: #f8e5e5;
+}
+
+.calendar-day.has-dayoff .dot {
+    opacity: 0;
+}
+.calendar-day.today.has-dayoff {
+    background: #f8e5e5;
+    border-color: #2f6b4f;
+    color: #2f6b4f;
+    font-weight: 700;
+}
+
+.calendar-day.selected.has-dayoff {
+    background: #2f6b4f !important;
+    color: #fff !important;
+}
+
+/* ===== Надпись "Выходной" ===== */
+.day-off-message {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #a94442;
+    border-radius: 12px;
+    padding: 40px 22px;
+    text-align: center;
+    color: #a94442;
+    font-size: 18px;
+    font-weight: 600;
+        box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 10px rgba(80, 60, 30, 0.04),
+        0 14px 28px rgba(80, 60, 30, 0.05);
+    margin-bottom: 22px;
+}
+
+/* ===== Сообщения для клиента ===== */
+.empty-day-message {
+    background: #ffffff;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #cbbf9f;
+    border-radius: 12px;
+    padding: 40px 22px;
+    text-align: center;
+    color: #8a8067;
+    font-size: 15px;
+    font-weight: 500;
+        box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 10px rgba(80, 60, 30, 0.04),
+        0 14px 28px rgba(80, 60, 30, 0.05);
+    margin-bottom: 22px;
+}
+
+@media (max-width: 700px) {
+    .day-off-message,
+    .empty-day-message {
+        padding: 26px 16px;
+        font-size: 15px;
+    }
+}
+/* ===== Кнопка "Выйти" в меню ===== */
+.logout-btn {
+    margin-top: auto;
+    width: 100%;
+    background: #f4f0e6;
+    color: #a94442;
+    border: 1px solid #e3d9c2;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+    text-align: center;
+}
+
+.logout-btn:hover {
+    background: #f8e5e5;
+    border-color: #a94442;
+    box-shadow: none;
+    color: #8b3634;
+}
+
+.logout-btn:active {
+    background: #f0d6d6;
+    transform: none;
+}
+/* ================================================================
+   РЕЖИМ КЛИЕНТА
+   ================================================================ */
+
+/* Скрываем всё, что помечено admin-only, когда включён клиентский режим */
+body.client-mode .admin-only {
+    display: none !important;
+}
+
+/* Скрываем всё, что помечено client-only, когда клиентский режим НЕ включён */
+body:not(.client-mode) .client-only {
+    display: none !important;
+}
+/* ================================================================
+   СКРЫТИЕ ЭЛЕМЕНТОВ УПРАВЛЕНИЯ В РЕЖИМЕ КЛИЕНТА
+   ================================================================ */
+
+/* Кнопка "Удалить тренировку" и её контейнер */
+body.client-mode .workout-header .actions {
+    display: none !important;
+}
+
+/* Кнопки в блоках: "+ Упражнение", "Добавить", "Убрать" */
+body.client-mode .block-header .block-actions {
+    display: none !important;
+}
+
+/* Колонка "Действия" в таблице — скрываем и заголовок, и ячейки */
+body.client-mode .exercise-table thead th:last-child {
+    display: none !important;
+}
+
+body.client-mode .exercise-table tbody td.cell-actions {
+    display: none !important;
+}
+/* ================================================================
+   ПЛАШКА IMPERSONATION — «Календарь клиента»
+   ================================================================ */
+.impersonation-banner {
+    position: sticky;
+    top: 56px;
+    z-index: 85;
+    background: #fff3cd;
+    border-bottom: 2px solid #e6c15a;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 18px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(120, 100, 70, 0.12);
+}
+
+.impersonation-text {
+    color: #6b5420;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.impersonation-text strong {
+    color: #2f6b4f;
+}
+
+#exitImpersonationBtn {
+    background: #2f6b4f;
+    color: #fff;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(47, 107, 79, 0.25);
+}
+
+#exitImpersonationBtn:hover {
+    background: #265741;
+}
+
+@media (max-width: 700px) {
+    .impersonation-banner {
+        top: 56px;
+        margin: 0 0 12px 0;
+        padding: 10px 12px;
+        font-size: 13px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #exitImpersonationBtn {
+        width: 100%;
+    }
+}
+/* ================================================================
+   СТРАНИЦА «КЛИЕНТЫ» — таблица
+   ================================================================ */
+
+.clients-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fffdf8;
+    border: 1px solid #ddd2b8;
+    border-radius: 10px;
+    overflow: hidden;
+        box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    margin-bottom: 18px;
+}
+
+.clients-table thead th {
+    text-align: left;
+    padding: 12px 14px;
+    background: #e8dfc9;
+    color: #3a3425;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 2px solid #d3c7a8;
+    border-right: 1px solid #ddd2b8;
+    white-space: nowrap;
+}
+
+.clients-table thead th:last-child {
+    border-right: none;
+    text-align: right;
+}
+
+.clients-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #ece4d4;
+    border-right: 1px solid #ece4d4;
+    vertical-align: middle;
+    color: #333;
+}
+
+.clients-table tbody td:last-child {
+    border-right: none;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.clients-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.clients-table tbody tr:hover {
+    background: #fbf6e9;
+}
+
+.clients-table .cell-client-name {
+    font-weight: 600;
+    color: #2f6b4f;
+    min-width: 160px;
+}
+
+.clients-table .cell-client-login {
+    font-family: 'Courier New', monospace;
+    color: #4a4232;
+    background: #f7f3ea;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.clients-table .cell-client-date {
+    color: #8a8067;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.clients-table .cell-client-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.clients-table .cell-client-actions button {
+    padding: 7px 14px;
+    font-size: 13px;
+    min-height: 34px;
+    line-height: 1;
+    box-shadow: none;
+    white-space: nowrap;
+}
+
+.clients-table .cell-client-actions button:hover {
+    box-shadow: 0 2px 6px rgba(47, 107, 79, 0.2);
+}
+
+.clients-table .cell-client-note {
+    color: #8a8067;
+    font-size: 13px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-clients {
+    color: #8a8067;
+    font-size: 14px;
+    padding: 24px 0;
+    font-style: italic;
+    text-align: center;
+}
+
+/* ================================================================
+   МОДАЛКА КЛИЕНТА — строка пароля с кнопкой генерации
+   ================================================================ */
+
+.password-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+}
+
+.password-row input {
+    flex: 1;
+}
+
+.password-row button {
+    flex: 0 0 auto;
+    padding: 0 14px;
+    font-size: 16px;
+    min-height: 42px;
+    box-shadow: none;
+}
+
+/* ================================================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ — таблица клиентов → карточки
+   ================================================================ */
+
+@media (max-width: 700px) {
+    .clients-table,
+    .clients-table thead,
+    .clients-table tbody,
+    .clients-table tr,
+    .clients-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .clients-table {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .clients-table thead {
+        display: none;
+    }
+
+    .clients-table tbody tr {
+        background: #fffdf8;
+        border: 1px solid #ddd2b8;
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(80, 60, 30, 0.05);
+    }
+
+    .clients-table tbody td {
+        border: none;
+        padding: 6px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .clients-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #8a8067;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        flex-shrink: 0;
+        min-width: 85px;
+    }
+
+    .clients-table .cell-client-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2f6b4f;
+        border-bottom: 1px dashed #e3d9c2;
+        padding-bottom: 10px !important;
+        margin-bottom: 6px;
+    }
+
+    .clients-table .cell-client-name::before {
+        display: none;
+    }
+
+       .clients-table .cell-client-actions {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 8px;
+        border-top: 1px dashed #e3d9c2;
+        padding-top: 10px !important;
+        margin-top: 6px;
+    }
+
+    .clients-table .cell-client-actions::before {
+        display: none;
+    }
+
+    .clients-table .cell-client-actions button {
+        flex: 1 1 auto;
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .clients-table .cell-client-note {
+        max-width: none;
+        white-space: normal;
+    }
+
+    .password-row {
+        flex-direction: row;
+    }
+
+    .password-row button {
+        min-height: 44px;
+    }
+}
+/* ================================================================
+   МОДАЛКА ДЕЙСТВИЙ С КЛИЕНТОМ
+   ================================================================ */
+.client-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.client-actions-list .action-btn {
+    display: block;
+    padding: 14px 16px;
+    background: #fdfaf1;
+    color: #4a4232;
+    border: 1px solid #e3d9c2;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+    width: 100%;
+}
+
+.client-actions-list .action-btn:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+    box-shadow: none;
+}
+
+.client-actions-list .action-btn:active {
+    background: #e5f0e6;
+    transform: none;
+}
+
+.client-actions-list .action-btn.danger {
+    background: #fdf2f2;
+    color: #a94442;
+    border-color: #f0d6d6;
+}
+
+.client-actions-list .action-btn.danger:hover {
+    background: #f8e5e5;
+    border-color: #a94442;
+    color: #8b3634;
+}
+/* ================================================================
+   СТРАНИЦА «АНКЕТА»
+   ================================================================ */
+
+/* Форма анкеты — вертикальная, не flex-wrap */
+#profileForm {
+    display: block;
+}
+
+/* Блок-секция анкеты */
+.profile-section {
+    background: #fffdf8;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+}
+
+.profile-section-title {
+    color: #2f6b4f;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin: 0 0 18px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #d3c7a8;
+    text-transform: uppercase;
+}
+
+/* Все лейблы в анкете — вертикальные */
+.profile-section label,
+.profile-actions label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4232;
+    margin-bottom: 16px;
+    width: 100%;
+    letter-spacing: 0.2px;
+}
+
+.profile-section label:last-child {
+    margin-bottom: 0;
+}
+
+/* Поля внутри анкеты — фиксированная высота, не растягиваются */
+.profile-section input,
+.profile-section select,
+.profile-section textarea {
+    width: 100%;
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+}
+
+.profile-section input,
+.profile-section select {
+    height: 42px;
+}
+
+.profile-section textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+.profile-section input:focus,
+.profile-section select:focus,
+.profile-section textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.profile-section input::placeholder,
+.profile-section textarea::placeholder {
+    color: #b8ae95;
+    font-size: 13px;
+}
+
+/* Сетка 2 колонки для коротких полей */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.profile-grid label {
+    margin-bottom: 0;
+}
+
+/* Кнопка «Сохранить» и статус */
+.profile-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: #fdfaf1;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    margin-bottom: 18px;
+}
+
+.profile-actions button {
+    flex-shrink: 0;
+}
+
+.profile-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2f6b4f;
+    letter-spacing: 0.3px;
+}
+
+.profile-status.saved {
+    color: #2f6b4f;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .profile-section {
+        padding: 18px 16px;
+        margin-bottom: 14px;
+    }
+
+    .profile-section-title {
+        font-size: 14px;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+    }
+
+    .profile-section label {
+        margin-bottom: 14px;
+        font-size: 12px;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .profile-actions button {
+        width: 100%;
+    }
+}
+/* ================================================================
+   АНКЕТА — РЕЖИМ ПРОСМОТРА (для админа)
+   ================================================================ */
+#profileForm.readonly-mode .profile-section input,
+#profileForm.readonly-mode .profile-section textarea,
+#profileForm.readonly-mode .profile-section select {
+    background: #f7f3ea;
+    color: #5a5344;
+    cursor: default;
+    border-color: #ece4d4;
+}
+
+#profileForm.readonly-mode .profile-section input:focus,
+#profileForm.readonly-mode .profile-section textarea:focus,
+#profileForm.readonly-mode .profile-section select:focus {
+    border-color: #ece4d4;
+    box-shadow: none;
+}
+
+#profileForm.readonly-mode .profile-actions {
+    background: #f7f3ea;
+    border-left-color: #cbbf9f;
+}
+/* ================================================================
+   СТРАНИЦА «АНКЕТЫ» (для админа) — двухколоночный layout
+   ================================================================ */
+
+.profiles-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+/* Левая колонка — список клиентов */
+.profiles-list {
+    background: #fffdf8;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    padding: 8px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    position: sticky;
+    top: 76px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.profile-pick-item {
+    padding: 12px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #4a4232;
+    transition: background 0.15s, color 0.15s;
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+}
+
+.profile-pick-item:hover {
+    background: #f2f7f1;
+    color: #2f6b4f;
+}
+
+.profile-pick-item.active {
+    background: #2f6b4f;
+    color: #fff;
+    font-weight: 600;
+}
+
+.profile-pick-item .pick-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.profile-pick-item .pick-status {
+    font-size: 11px;
+    opacity: 0.75;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.profile-pick-item.active .pick-status {
+    opacity: 0.9;
+}
+
+/* Правая колонка — контент анкеты */
+.profiles-content {
+    min-width: 0; /* важно для grid */
+}
+
+/* Заглушка, если клиент не выбран */
+.profiles-empty {
+    text-align: center;
+    padding: 60px 24px;
+    background: #fdfaf1;
+    border-left-color: #cbbf9f;
+}
+
+.profiles-empty .hint {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Индикатор пустой анкеты */
+.profiles-empty-note {
+    background: #fdfaf1;
+    border: 1px dashed #d3c7a8;
+    border-radius: 10px;
+    padding: 30px 20px;
+    text-align: center;
+    color: #8a8067;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Заголовок анкеты в правой колонке */
+.profiles-header {
+    background: #fdfaf1;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.profiles-header h2 {
+    margin: 0 0 4px 0;
+    color: #2f6b4f;
+    font-size: 20px;
+}
+
+.profiles-header .hint {
+    margin: 0;
+    font-size: 13px;
+    color: #8a8067;
+}
+
+/* Мобильный layout */
+@media (max-width: 700px) {
+    .profiles-layout {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .profiles-list {
+        position: static;
+        max-height: 240px;
+        margin-bottom: 0;
+    }
+
+    .profile-pick-item {
+        padding: 10px 12px;
+    }
+}
+/* ===== Readonly-поля в анкете (просмотр) ===== */
+.profile-readonly-field {
+    padding: 10px 12px;
+    background: #f7f3ea;
+    border: 1px solid #ece4d4;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #5a5344;
+    min-height: 42px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.profile-readonly-field .cell-empty {
+    color: #b8ae95;
+}
+/* ================================================================
+   СТРАНИЦА «СКРИНИНГ»
+   ================================================================ */
+
+/* Категория вверху — селект */
+.screening-category {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #fdfaf1;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.screening-category-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4a4232;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+}
+
+.screening-category select {
+    flex: 1;
+    max-width: 320px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    height: 42px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.screening-category select:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* Блок скрининга (как profile-section, но с другой структурой) */
+.screening-section {
+    background: #fffdf8;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+}
+
+.screening-section-title {
+    color: #2f6b4f;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #d3c7a8;
+    text-transform: uppercase;
+}
+
+.screening-hint {
+    font-size: 12px;
+    color: #8a8067;
+    font-style: italic;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}
+
+/* Строка скрининга: пункт слева, поле справа */
+.screening-row {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ece4d4;
+}
+
+.screening-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.screening-row-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4232;
+    line-height: 1.4;
+}
+
+.screening-row input,
+.screening-row textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+}
+
+.screening-row input {
+    height: 40px;
+}
+
+.screening-row textarea {
+    resize: vertical;
+    min-height: 40px;
+    line-height: 1.5;
+}
+
+.screening-row input:focus,
+.screening-row textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* Большое поле «Приоритеты в тренировках» */
+.screening-priorities {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.screening-priorities:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* Кнопка сохранения */
+.screening-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: #fdfaf1;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    margin-bottom: 18px;
+}
+
+.screening-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2f6b4f;
+    letter-spacing: 0.3px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .screening-category {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 14px 16px;
+    }
+
+    .screening-category select {
+        max-width: none;
+    }
+
+    .screening-section {
+        padding: 18px 16px;
+    }
+
+    .screening-section-title {
+        font-size: 14px;
+        margin-bottom: 14px;
+    }
+
+    .screening-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 10px 0;
+    }
+
+    .screening-row-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #8a8067;
+    }
+
+    .screening-actions {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+    }
+
+    .screening-actions button {
+        width: 100%;
+    }
+}
+/* ================================================================
+   СКРИНИНГ — режим просмотра (readonly)
+   ================================================================ */
+
+.screening-category-value {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2f6b4f;
+    padding: 10px 0;
+}
+
+.screening-value {
+    padding: 10px 12px;
+    background: #f7f3ea;
+    border: 1px solid #ece4d4;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #5a5344;
+    min-height: 40px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.screening-value .cell-empty {
+    color: #b8ae95;
+}
+
+.screening-priorities-value {
+    padding: 14px 16px;
+    background: #f7f3ea;
+    border: 1px solid #ece4d4;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #5a5344;
+    min-height: 100px;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.screening-priorities-value .cell-empty {
+    color: #b8ae95;
+    font-style: italic;
+}
+/* ===== Кастомные пункты в скрининге ===== */
+.screening-add-row {
+    margin-top: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.screening-add-row .screening-new-label-input {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    height: 40px;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.screening-add-row .screening-new-label-input:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.screening-add-row .screening-new-label-input::placeholder {
+    color: #b8ae95;
+}
+
+.screening-add-row button {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 40px;
+    flex-shrink: 0;
+}
+/* Кастомный ряд — как стандартный, но с ✕ */
+.screening-row-custom {
+    grid-template-columns: 260px 1fr 40px;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Поле названия — выглядит как метка */
+/* Нередактируемая метка кастомного пункта */
+.screening-custom-label-static {
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4232;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* Кнопка удаления */
+.screening-remove-btn {
+    padding: 0;
+    background: #fdf2f2;
+    color: #a94442;
+    border: 1px solid #f0d6d6;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screening-remove-btn:hover {
+    background: #f8e5e5;
+    border-color: #a94442;
+    box-shadow: none;
+}
+
+.screening-remove-btn:hover {
+    background: #f8e5e5;
+    border-color: #a94442;
+    box-shadow: none;
+}
+
+@media (max-width: 700px) {
+    .screening-row-custom {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding: 12px 0;
+        border-bottom: 1px dashed #ece4d4;
+    }
+
+    .screening-custom-label-static {
+        grid-column: 1 / -1;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        color: #8a8067;
+        padding: 4px 0;
+    }
+
+    .screening-row-custom input[data-screening-group] {
+        grid-column: 1;
+    }
+
+    .screening-remove-btn {
+        grid-column: 2;
+        width: 40px;
+        height: 40px;
+    }
+}
+/* ================================================================
+   СТРАНИЦА «ШАБЛОНЫ ТРЕНИРОВОК»
+   ================================================================ */
+
+/* Контейнер карточек шаблонов */
+.templates-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Карточка шаблона */
+.template-card {
+    background: #fffdf8;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    padding: 18px 22px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.template-card:hover {
+    box-shadow:
+        0 2px 4px rgba(80, 60, 30, 0.05),
+        0 8px 16px rgba(80, 60, 30, 0.06),
+        0 16px 32px rgba(80, 60, 30, 0.07);
+    transform: translateY(-1px);
+}
+
+/* Заголовок карточки */
+.template-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.template-card-header h3 {
+    color: #2f6b4f;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.2px;
+}
+
+.template-card-meta {
+    font-size: 12px;
+    color: #8a8067;
+    letter-spacing: 0.2px;
+}
+
+/* Статистика по блокам */
+.template-card-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #ece4d4;
+}
+
+.template-stat {
+    font-size: 13px;
+    color: #4a4232;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.template-stat .stat-label {
+    color: #8a8067;
+    font-weight: 500;
+}
+
+.template-stat .stat-value {
+    font-weight: 700;
+    color: #2f6b4f;
+}
+
+.template-stat .stat-value.empty {
+    color: #b8ae95;
+    font-weight: 500;
+}
+
+/* Кнопки действий в карточке */
+.template-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.template-card-actions button {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 36px;
+}
+
+/* Заглушка, если у клиента нет шаблонов */
+.templates-empty {
+    background: #fdfaf1;
+    border: 1px dashed #d3c7a8;
+    border-radius: 12px;
+    padding: 40px 24px;
+    text-align: center;
+    color: #8a8067;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.templates-empty strong {
+    color: #2f6b4f;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .template-card {
+        padding: 16px 14px;
+    }
+
+    .template-card-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .template-card-header h3 {
+        font-size: 16px;
+    }
+
+    .template-card-stats {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .template-card-actions {
+        flex-direction: column;
+    }
+
+    .template-card-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+/* ===== Раскрытие содержимого шаблона ===== */
+.template-toggle-btn {
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: #fdfaf1;
+    color: #2f6b4f;
+    border: 1px solid #e3d9c2;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.template-toggle-btn:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+    box-shadow: none;
+}
+
+.template-toggle-btn .toggle-arrow {
+    font-size: 11px;
+    line-height: 1;
+    display: inline-block;
+    transition: transform 0.15s;
+}
+
+/* Контент шаблона */
+.template-card-content {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #ece4d4;
+}
+
+.template-block {
+    margin-bottom: 14px;
+}
+
+.template-block:last-child {
+    margin-bottom: 0;
+}
+
+.template-block-title {
+    color: #2f6b4f;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.template-block-title::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    display: inline-block;
+}
+
+/* Обёртка для горизонтального скролла на узких экранах */
+.template-block-scroll {
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+.template-table {
+    font-size: 12px;
+    min-width: 600px;
+}
+
+.template-table thead th {
+    padding: 8px 10px;
+    font-size: 10px;
+}
+
+.template-table tbody td {
+    padding: 8px 10px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .template-toggle-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .template-block-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .template-table {
+        min-width: 500px;
+    }
+}
+/* ================================================================
+   КАЛЕНДАРЬ + СЕЛЕКТОР КЛИЕНТА (в одну строку)
+   ================================================================ */
+
+.calendar-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: start;
+    margin-bottom: 18px;
+}
+
+/* Левая колонка — селектор, прижат к левому краю */
+.calendar-row .client-picker-card {
+    grid-column: 1;
+    justify-self: start;
+    width: 240px;
+    align-self: start;
+}
+
+/* Центральная колонка — календарь */
+.calendar-row .calendar-card {
+    grid-column: 2;
+    margin: 0;
+    max-width: 420px;
+    width: 420px;
+}
+
+
+/* Селектор клиента — карточка слева от календаря */
+.client-picker-card {
+    padding: 18px 20px;
+    background: #fdfaf1;
+    border-left: 4px solid #2f6b4f;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.client-picker-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #8a8067;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.client-picker-card select {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    height: 46px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.client-picker-card select:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* Календарь в строке — не растягивается */
+.calendar-row .calendar-card {
+    margin: 0;
+    flex: 0 1 420px;
+}
+
+/* Мобильная адаптация — селектор сверху */
+@media (max-width: 700px) {
+    .calendar-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .calendar-row .client-picker-card {
+        grid-column: 1;
+        width: 100%;
+        padding: 14px 16px;
+    }
+
+    .calendar-row .calendar-card {
+        grid-column: 1;
+        width: 100%;
+        max-width: none;
+        margin: 0 auto;
+    }
+}
+/* ================================================================
+   ДЕКОРАТИВНАЯ КАРТИНКА В ОВЕРЛЕЕ ВХОДА
+   ================================================================ */
+.login-deco {
+    position: absolute;
+    pointer-events: none;   /* не мешает кликам по форме */
+    user-select: none;
+    opacity: 0.85;
+    z-index: 1;              /* под карточкой .login-box */
+}
+
+.login-deco-bl {
+    bottom: 24px;
+    left: 24px;
+    height: 220px;           /* высота; ширина подстроится */
+    width: auto;
+}
+.login-deco-br {
+    bottom: 24px;
+    right: 24px;
+    height: 220px;
+    width: auto;
+}
+.login-deco-tl {
+    top: 24px;
+    left: 24px;
+    height: 220px;
+    width: auto;
+}
+
+.login-deco-tr {
+    top: 24px;
+    right: 24px;
+    height: 220px;
+    width: auto;
+}
+/* Верхний центр — по краю, как угловые */
+.login-deco-tc {
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 220px;
+    width: auto;
+}
+
+/* Нижний центр — по краю, как угловые */
+.login-deco-bc {
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 220px;
+    width: auto;
+}
+
+/* Левый центр — крупнее, чтобы визуально совпал с остальными */
+.login-deco-ml {
+    top: 50%;
+    left: 160px;
+    transform: translateY(-50%);
+    height: 300px;    /* было 220px */
+    width: auto;
+}
+
+/* Правый центр — крупнее, чтобы визуально совпал с остальными */
+.login-deco-mr {
+    top: 50%;
+    right: 160px;
+    transform: translateY(-50%);
+    height: 300px;    /* было 220px */
+    width: auto;
+}
+
+/* На мобильных — меньше */
+@media (max-width: 700px) {
+    .login-deco-bl {
+        bottom: 15px;
+        left: 12px;
+        height: 160px;
+        opacity: 0.7;
+    }
+
+.login-deco-br {
+        bottom: 15px;
+        right: 12px;
+        height: 160px;
+        opacity: 0.7;
+    }
+        .login-deco-tl {
+        top: 15px;
+        left: 12px;
+        height: 160px;
+        opacity: 0.7;
+    }
+
+    .login-deco-tr {
+        top: 15px;
+        right: 12px;
+        height: 160px;
+        opacity: 0.7;
+    }
+        /* Средние картинки на мобильных — скрываем,
+       чтобы не перекрывать форму логина на маленьком экране */
+    .login-deco-tc,
+    .login-deco-bc,
+    .login-deco-ml,
+    .login-deco-mr {
+        display: none;
+    }
+}
+/* ================================================================
+   ФИЛЬТР ПО ГРУППАМ В БИБЛИОТЕКЕ
+   ================================================================ */
+.library-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #d3c7a8;
+    flex-wrap: wrap;
+}
+
+.library-filter label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4232;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.library-filter select {
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    height: 40px;
+    min-width: 220px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.library-filter select:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+/* ================================================================
+   СЕКЦИИ ПО ГРУППАМ НА СТРАНИЦЕ «УПРАЖНЕНИЯ»
+   ================================================================ */
+.exercise-group-section {
+    margin-bottom: 28px;
+}
+
+.exercise-group-title {
+    color: #2f6b4f;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0 0 14px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2f6b4f;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.exercise-group-title .group-count {
+    font-size: 12px;
+    color: #8a8067;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+    background: #f2f7f1;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+@media (max-width: 700px) {
+    .library-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .library-filter select {
+        width: 100%;
+        min-width: 0;
+    }
+}
+/* ================================================================
+   АККОРДЕОН ПО ГРУППАМ В МОДАЛКЕ ТРЕНИРОВКИ
+   ================================================================ */
+.library-group {
+    margin-bottom: 6px;
+    border: 1px solid #e3d9c2;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fffdf8;
+}
+
+.library-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+    background: #f2f7f1;
+}
+
+.library-group-header:hover {
+    background: #e5f0e6;
+}
+
+.library-group-title {
+    font-weight: 700;
+    color: #2f6b4f;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.library-group-title .toggle-arrow {
+    font-size: 11px;
+    display: inline-block;
+    transition: transform 0.2s;
+    color: #2f6b4f;
+    width: 12px;
+}
+
+.library-group.open .library-group-title .toggle-arrow {
+    transform: rotate(90deg);
+}
+
+.library-group-count {
+    font-size: 12px;
+    color: #8a8067;
+    background: #ffffff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.library-group-body {
+    display: none;
+    padding: 6px;
+}
+
+.library-group.open .library-group-body {
+    display: block;
+}
+
+.library-group-body .library-item {
+    margin-bottom: 6px;
+}
+
+.library-group-body .library-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Подсветка выбранного упражнения */
+.library-group-body .library-item.selected {
+    background: #e5f0e6;
+    border-color: #2f6b4f;
+}
+/* ================================================================
+   РЕЖИМ «МОЙ КАЛЕНДАРЬ» АДМИНА — скрываем форму создания тренировок
+   ================================================================ */
+body.admin-own-calendar #workoutForm {
+    display: none;
+}
+
+body.admin-own-calendar #toggleDayOffBtn {
+    display: none;
+}
+
+body.admin-own-calendar #addFromTemplateBtn {
+    display: none;
+}
+/* ================================================================
+   СВОДКА ПО КЛИЕНТАМ (админ в «Моём календаре»)
+   ================================================================ */
+.admin-day-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.admin-day-summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #fffdf8;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.admin-day-summary-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.admin-day-summary-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2f6b4f;
+}
+
+.admin-day-summary-workouts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+    color: #5a5344;
+}
+
+.admin-day-summary-workout {
+    background: #f2f7f1;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.admin-day-summary-btn {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 40px;
+}
+
+@media (max-width: 700px) {
+    .admin-day-summary-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .admin-day-summary-btn {
+        width: 100%;
+    }
+}
