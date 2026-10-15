@@ -63,10 +63,11 @@
                  <ul>
             <li><button type="button" class="menu-link active" data-page="workouts">Мои тренировки</button></li>
             <li class="admin-only"><button type="button" class="menu-link" data-page="clients">Клиенты</button></li>
+                        <li class="admin-only"><button type="button" class="menu-link" data-page="reports">Архив тренировок и отчеты</button></li>
             <li class="admin-only"><button type="button" class="menu-link" data-page="templates">Шаблоны тренировок</button></li>
             <li class="admin-only"><button type="button" class="menu-link" data-page="profiles">Анкеты</button></li>
             <li class="admin-only"><button type="button" class="menu-link" data-page="screening">Скрининг</button></li>
-            <li class="admin-only"><button type="button" class="menu-link" data-page="exercises">Упражнения</button></li>
+                        <li class="admin-only"><button type="button" class="menu-link" data-page="exercises">Библиотека упражнений</button></li>
             <li class="client-only"><button type="button" class="menu-link" data-page="profile">Моя анкета</button></li>
         </ul>
         <button type="button" class="logout-btn" id="logoutBtn">Выйти</button>
@@ -87,18 +88,27 @@
         <!-- ========== СТРАНИЦА: МОИ ТРЕНИРОВКИ ========== -->
         <section id="page-workouts" class="page">
 
-                     <div class="calendar-row">
-                                <div class="card client-picker-card admin-only">
+                        <div class="calendar-row">
+                <div class="card client-picker-card admin-only">
                     <label class="client-picker-label" for="clientPickerSelect">Клиенты</label>
                     <select id="clientPickerSelect">
                         <!-- Заполняется JS -->
                     </select>
                 </div>
-    <div class="card instruction-card client-only">
-        <label class="client-picker-label">Инструкция</label>
-        <button type="button" id="openInstructionBtn"> Как читать таблицу</button>
-    </div>
+
+                <div class="card instruction-card client-only">
+                    <label class="client-picker-label">Инструкция</label>
+                    <button type="button" id="openInstructionBtn"> Как читать таблицу</button>
+                </div>
+
                 <div class="card calendar-card">
+                    <div class="calendar-deco calendar-deco-left" aria-hidden="true">
+                        <img src="images/sport4.svg" alt="">
+                    </div>
+                    <div class="calendar-deco calendar-deco-right" aria-hidden="true">
+                        <img src="images/sport8.svg" alt="">
+                    </div>
+
                     <div class="calendar-header">
                         <button type="button" class="secondary" id="prevMonth">←</button>
                         <h2 id="monthLabel">Октябрь 2026</h2>
@@ -122,13 +132,15 @@
                     <button type="button" class="secondary" id="addFromTemplateBtn">Из шаблона</button>
                     <button type="button" class="secondary" id="toggleDayOffBtn">Пометить выходным</button>
                 </form>
-            </div>
 
+            </div>
+            
             <!-- Заголовок для клиента, когда форма скрыта -->
             <div class="card client-only" id="clientDateHeader">
                 <h2 id="clientSelectedDateLabel">Тренировки за …</h2>
-            </div>
 
+            </div>
+            
                         <section id="workoutsList"></section>
 
                        <!-- ========== ОБРАТНАЯ СВЯЗЬ ПО ДНЮ ========== -->
@@ -181,7 +193,7 @@
                 </div>
 
                 <!-- Справа — форма скрининга -->
-                <div class="profiles-content" id="screeningContent">
+                                <div class="profiles-content" id="screeningContent">
                     <div class="card profiles-empty">
                         <p class="hint">Выберите клиента из списка слева.</p>
                     </div>
@@ -359,6 +371,23 @@
 
             </form>
         </section>
+                        <!-- ========== СТРАНИЦА: АРХИВ ТРЕНИРОВОК И ОТЧЁТЫ (для админа) ========== -->
+        <section id="page-reports" class="page hidden admin-only">
+            <div class="reports-layout">
+                <!-- Сверху — список клиентов (горизонтальный) -->
+                <div class="reports-list" id="reportsList">
+                    <!-- Заполняется JS -->
+                </div>
+
+                <!-- Ниже — контент отчёта -->
+                <div class="reports-content" id="reportsContent">
+                    <div class="card profiles-empty">
+                        <p class="hint">Выберите клиента из списка выше.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
                 <!-- ========== СТРАНИЦА: ШАБЛОНЫ ТРЕНИРОВОК ========== -->
         <section id="page-templates" class="page hidden admin-only">
             <div class="card">
@@ -544,6 +573,25 @@
             <div class="modal-footer">
                 <button type="button" class="secondary" id="cancelEditWorkoutName">Отмена</button>
                 <button type="submit" form="editWorkoutNameForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
+        <!-- ========== МОДАЛКА: РЕДАКТИРОВАНИЕ ДАТЫ ОТЧЁТА ========== -->
+    <div id="editReportDateModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Редактировать дату отчёта</h2>
+            </div>
+            <div class="modal-body">
+                <form id="editReportDateForm">
+                    <label>Дата
+                        <input type="date" id="editReportDateInput" required>
+                    </label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary" id="cancelEditReportDate">Отмена</button>
+                <button type="submit" form="editReportDateForm">Сохранить</button>
             </div>
         </div>
     </div>
@@ -873,9 +921,12 @@
         </div>
     </div>
 
-        <script src="icons.js"></script>
-    <script src="app-1-core.js"></script>
-    <script src="app-2-workouts.js"></script>
-    <script src="app-3-library-programs.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="icons.js"></script>
+<script src="app-1-core.js"></script>
+<script src="app-2-workouts.js"></script>
+<script src="app-3-library-programs.js"></script>
+<script src="app-4-supabase.js"></script>
+<script src="app-5-reports.js"></script>
 </body>
 </html>

@@ -1253,7 +1253,6 @@ button[disabled] {
 /* Скролл-обёртка на мобильном не нужна — карточки вертикальные */
 .table-scroll {
     overflow-x: visible;
-    
 }
 .table-scroll .exercise-table {
     min-width: 0;
@@ -3953,4 +3952,1099 @@ body.admin-own-calendar #addFromTemplateBtn {
     font-size: 13px;
     color: #2f6b4f;
     font-family: 'Courier New', monospace;
+}
+/* ================================================================
+   СТРАНИЦА «ОТЧЁТНОСТЬ» — таблица отчёта
+   ================================================================ */
+.report-block {
+    background: #fffdf8;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    min-width: 0;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.report-block-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2f6b4f;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #d3c7a8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.report-block-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2f6b4f;
+    display: inline-block;
+}
+
+.report-table {
+    min-width: 700px;
+}
+
+.report-table thead th {
+    text-align: center;
+}
+
+.report-table tbody td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 6px 8px;
+}
+
+.report-table .report-week {
+    font-weight: 700;
+    color: #2f6b4f;
+    font-size: 14px;
+    width: 60px;
+}
+
+.report-table .report-input {
+    width: 100%;
+    min-width: 60px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #2b2b2b;
+    text-align: center;
+    height: 34px;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.report-table .report-input:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.report-table .report-calc {
+    font-weight: 700;
+    color: #2f6b4f;
+    font-size: 14px;
+    background: #f2f7f1;
+    min-width: 70px;
+}
+
+/* Мобильная адаптация — таблица со скроллом */
+@media (max-width: 700px) {
+    .report-block {
+        padding: 14px 12px;
+    }
+
+    .report-table {
+        min-width: 640px;
+    }
+
+    .report-table .report-input {
+        min-width: 50px;
+        font-size: 12px;
+        padding: 5px 6px;
+        height: 32px;
+    }
+
+    .report-table .report-week {
+        font-size: 13px;
+    }
+}
+/* ================================================================
+   REPORT-TABLE — собственная базовая стилизация (не зависит от .exercise-table)
+   ================================================================ */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid #ddd2b8;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fffdf8;
+    min-width: 700px;
+}
+
+.report-table thead th {
+    text-align: center;
+    padding: 10px 12px;
+    background: #e8dfc9;
+    color: #3a3425;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-right: 1px solid #ddd2b8;
+    border-bottom: 2px solid #d3c7a8;
+    white-space: nowrap;
+}
+
+.report-table thead th:last-child {
+    border-right: none;
+}
+
+.report-table tbody td {
+    padding: 8px 10px;
+    border-right: 1px solid #ece4d4;
+    border-bottom: 1px solid #ece4d4;
+    vertical-align: middle;
+    color: #333;
+    text-align: center;
+}
+
+.report-table tbody td:last-child {
+    border-right: none;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.report-table .report-week {
+    font-weight: 700;
+    color: #2f6b4f;
+    font-size: 14px;
+    width: 60px;
+}
+
+.report-table .report-input {
+    width: 100%;
+    min-width: 60px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #2b2b2b;
+    text-align: center;
+    height: 34px;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.report-table .report-input:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.report-table .report-calc {
+    font-weight: 700;
+    color: #2f6b4f;
+    font-size: 14px;
+    background: #f2f7f1;
+    min-width: 70px;
+}
+/* ================================================================
+   REPORT-SCROLL — горизонтальный скролл именно для отчёта
+   (перебивает .table-scroll { overflow-x: visible } на мобильном)
+   ================================================================ */
+.table-scroll.report-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
+
+@media (max-width: 700px) {
+    .table-scroll.report-scroll {
+        overflow-x: auto;
+    }
+}
+/* ================================================================
+   АРХИВ ВЫПОЛНЕННЫХ ТРЕНИРОВОК (в «Отчётности»)
+   ================================================================ */
+.completed-workouts-section {
+    margin-top: 28px;
+}
+
+.completed-workouts-header {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #ece4d4;
+}
+
+.completed-workouts-header h3 {
+    color: #2f6b4f;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.completed-workouts-header .hint {
+    margin: 0;
+}
+
+.completed-workouts-empty {
+    background: #fdfaf1;
+    border: 1px dashed #d3c7a8;
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    color: #8a8067;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.completed-workouts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.completed-workout-card {
+    background: #fffdf8;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 18px 22px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.completed-workout-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.completed-workout-card-header h4 {
+    color: #2f6b4f;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.2px;
+}
+
+.completed-workout-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-size: 12px;
+    color: #8a8067;
+}
+
+.completed-workout-date {
+    font-weight: 600;
+}
+
+.completed-workout-difficulty {
+    background: #f2f7f1;
+    color: #2f6b4f;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.completed-workout-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #ece4d4;
+}
+
+.completed-workout-content {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed #ece4d4;
+}
+
+.completed-workouts-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.completed-workouts-more button {
+    padding: 11px 22px;
+}
+
+@media (max-width: 700px) {
+    .completed-workout-card {
+        padding: 16px 14px;
+    }
+
+    .completed-workout-card-header h4 {
+        font-size: 16px;
+    }
+
+    .completed-workout-stats {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .completed-workout-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .completed-workouts-more button {
+        width: 100%;
+    }
+}
+/* ================================================================
+   ТАБЛИЦА УПРАЖНЕНИЙ ВНУТРИ АРХИВА ВЫПОЛНЕННЫХ
+   ================================================================ */
+.completed-workout-table {
+    width: 100%;
+    min-width: 1040px;   /* 70+50+220+70+70+90+70+180+220 */
+    border-collapse: collapse;
+    font-size: 12px;
+    border: 1px solid #ddd2b8;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fffdf8;
+    table-layout: fixed;
+}
+
+.completed-workout-table thead th {
+    text-align: left;
+    padding: 8px 10px;
+    background: #e8dfc9;
+    color: #3a3425;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-right: 1px solid #ddd2b8;
+    border-bottom: 2px solid #d3c7a8;
+    white-space: nowrap;
+}
+
+.completed-workout-table thead th:last-child {
+    border-right: none;
+}
+
+.completed-workout-table tbody td {
+    padding: 8px 10px;
+    border-right: 1px solid #ece4d4;
+    border-bottom: 1px solid #ece4d4;
+    vertical-align: top;
+    color: #333;
+}
+
+.completed-workout-table tbody td:last-child {
+    border-right: none;
+}
+
+.completed-workout-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.completed-workout-table .cell-group {
+    font-weight: 600;
+    color: #2f6b4f;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.completed-workout-table .cell-num {
+    font-weight: 600;
+    color: #4a4232;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.completed-workout-table .cell-name {
+    font-weight: 600;
+    color: #2f6b4f;
+    min-width: 160px;
+}
+
+.completed-workout-table .cell-comment {
+    color: #5a5344;
+    font-size: 12px;
+    max-width: 200px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.completed-workout-table .cell-report {
+    min-width: 140px;
+    max-width: 200px;
+}
+
+.completed-workout-table .report-preview {
+    color: #5a5344;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.completed-workout-table .cell-empty {
+    color: #b8ae95;
+}
+
+/* Метка "уведён" у скрытого блока */
+.cw-block-hidden-label {
+    color: #8a8067;
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+}
+
+/* Скрытый (уведённый) блок — приглушённый вид */
+.cw-block-hidden .template-block-title::before {
+    background: #cbbf9f;
+}
+
+/* Небольшая адаптация на мобильном — уже есть .table-scroll.report-scroll */
+@media (max-width: 700px) {
+    .completed-workout-table {
+        min-width: 720px;
+    }
+
+    .completed-workout-table thead th {
+        font-size: 9px;
+        padding: 6px 8px;
+    }
+
+    .completed-workout-table tbody td {
+        padding: 6px 8px;
+    }
+}
+/* ================================================================
+   ДВЕ ТАБЛИЦЫ ОТЧЁТА — В РЯД
+   ================================================================ */
+.report-blocks-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    margin-bottom: 18px;
+}
+
+/* Убираем нижний отступ у блоков внутри ряда */
+.report-blocks-row .report-block {
+    margin-bottom: 0;
+}
+
+/* Ячейки чуть компактнее */
+.report-blocks-row .report-table {
+    font-size: 12px;
+    min-width: 620px;
+}
+
+.report-blocks-row .report-table thead th {
+    padding: 8px 8px;
+    font-size: 10px;
+    letter-spacing: 0.4px;
+}
+
+.report-blocks-row .report-table tbody td {
+    padding: 6px 6px;
+}
+
+.report-blocks-row .report-table .report-week {
+    font-size: 13px;
+    width: 50px;
+}
+
+.report-blocks-row .report-table .report-input {
+    padding: 5px 6px;
+    font-size: 12px;
+    height: 32px;
+    min-width: 50px;
+}
+
+.report-blocks-row .report-table .report-calc {
+    font-size: 13px;
+    min-width: 60px;
+}
+
+/* На узких экранах — обратно в столбик */
+@media (max-width: 1100px) {
+    .report-blocks-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+/* ================================================================
+   СТРАНИЦА «ОТЧЁТНОСТЬ» — своя раскладка
+   (список клиентов сверху, контент во всю ширину)
+   ================================================================ */
+.reports-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Список клиентов — горизонтальный ряд чипов */
+.reports-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: #fffdf8;
+    border-radius: 12px;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+/* Чип клиента */
+.reports-list .profile-pick-item {
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #4a4232;
+    border: 1px solid #e3d9c2;
+    background: #fdfaf1;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reports-list .profile-pick-item:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+    color: #2f6b4f;
+}
+
+.reports-list .profile-pick-item.active {
+    background: #2f6b4f;
+    border-color: #2f6b4f;
+    color: #fff;
+    font-weight: 600;
+}
+
+.reports-list .profile-pick-item .pick-name {
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.reports-list .profile-pick-item .pick-status {
+    font-size: 10px;
+    opacity: 0.75;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.reports-list .profile-pick-item.active .pick-status {
+    opacity: 0.9;
+}
+
+/* Контент отчёта — на всю ширину */
+.reports-content {
+    min-width: 0;
+}
+
+/* Мобильная адаптация — там список может быть во много строк, это ок */
+@media (max-width: 700px) {
+    .reports-list {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .reports-list .profile-pick-item {
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+}
+/* ================================================================
+   АКТИВНАЯ КАРТОЧКА ОТЧЁТА ТРЕНЕРА
+   ================================================================ */
+.admin-report-active {
+    background: #fffdf8;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #2f6b4f;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04),
+        0 12px 24px rgba(80, 60, 30, 0.05);
+}
+
+.admin-report-active-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #d3c7a8;
+}
+
+.admin-report-active-header h3 {
+    color: #2f6b4f;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+.admin-report-active-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a4232;
+    margin-bottom: 14px;
+}
+
+.admin-report-active-label textarea {
+    width: 100%;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-report-active-label textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}
+
+.admin-report-active-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ================================================================
+   СОХРАНЁННЫЕ ОТЧЁТЫ ТРЕНЕРА
+   ================================================================ */
+.admin-reports-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.admin-report-saved {
+    background: #fdfaf1;
+    border: 1px solid #ece4d4;
+    border-left: 4px solid #cbbf9f;
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow:
+        0 1px 2px rgba(80, 60, 30, 0.04),
+        0 4px 8px rgba(80, 60, 30, 0.04);
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.admin-report-saved:hover {
+    box-shadow:
+        0 2px 4px rgba(80, 60, 30, 0.05),
+        0 8px 16px rgba(80, 60, 30, 0.06);
+    transform: translateY(-1px);
+}
+
+.admin-report-saved-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.admin-report-saved-title {
+    color: #2f6b4f;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-report-saved-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbbf9f;
+    display: inline-block;
+}
+
+.admin-report-saved-date {
+    font-size: 12px;
+    color: #8a8067;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.admin-report-saved-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.admin-report-saved-actions button {
+    padding: 7px 14px;
+    font-size: 13px;
+    min-height: 34px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 700px) {
+    .admin-report-active {
+        padding: 16px 14px;
+    }
+
+    .admin-report-active-header h3 {
+        font-size: 15px;
+    }
+
+    .admin-report-active-actions {
+        flex-direction: column;
+    }
+
+    .admin-report-active-actions button {
+        width: 100%;
+    }
+
+    .admin-report-saved {
+        padding: 12px 14px;
+    }
+
+    .admin-report-saved-actions {
+        flex-direction: column;
+    }
+
+    .admin-report-saved-actions button {
+        width: 100%;
+    }
+}
+
+/* ================================================================
+   ТЕЛО СОХРАНЁННОГО ОТЧЁТА — превью, раскрывающееся в полный текст
+   ================================================================ */
+.admin-report-body {
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: #fffdf8;
+    border: 1px dashed transparent;
+}
+
+.admin-report-body:hover {
+    background: #f2f7f1;
+    border-color: #c8ddc8;
+}
+
+.admin-report-body.expanded {
+    cursor: default;
+    background: #f7f3ea;
+    border-color: #ece4d4;
+    border-style: solid;
+}
+
+.admin-report-body.expanded:hover {
+    background: #f7f3ea;
+    border-color: #ece4d4;
+}
+
+.admin-report-body-preview {
+    color: #4a4232;
+    font-size: 14px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.admin-report-body-full {
+    color: #2b2b2b;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Подсказка "развернуть" — маленькая стрелка в углу превью */
+.admin-report-body:not(.expanded) .admin-report-body-preview::after {
+    content: " ▸";
+    color: #2f6b4f;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.admin-report-body.expanded .admin-report-body-full::after {
+    content: " ▴";
+    color: #8a8067;
+    font-weight: 700;
+    font-size: 11px;
+    margin-left: 4px;
+}
+/* ================================================================
+   ВИЗУАЛЬНАЯ ОТМЕТКА «ОТЧЁТ ТОЛЬКО ЧТО СОХРАНЁН»
+   ================================================================ */
+
+/* Зелёная вспышка у сохранённого отчёта в ленте */
+.admin-report-saved.admin-report-just-saved {
+    animation: adminReportJustSaved 1.6s ease-out;
+}
+
+@keyframes adminReportJustSaved {
+    0% {
+        background: #e5f0e6;
+        border-left-color: #2f6b4f;
+        box-shadow:
+            0 0 0 3px rgba(47, 107, 79, 0.35),
+            0 4px 12px rgba(47, 107, 79, 0.15);
+        transform: scale(1.01);
+    }
+    30% {
+        background: #e5f0e6;
+        border-left-color: #2f6b4f;
+        box-shadow:
+            0 0 0 3px rgba(47, 107, 79, 0.25),
+            0 4px 12px rgba(47, 107, 79, 0.1);
+        transform: scale(1);
+    }
+    100% {
+        background: #fdfaf1;
+        border-left-color: #cbbf9f;
+        box-shadow:
+            0 1px 2px rgba(80, 60, 30, 0.04),
+            0 4px 8px rgba(80, 60, 30, 0.04);
+        transform: scale(1);
+    }
+}
+
+/* Мягкая пульсация активной карточки после сохранения */
+.admin-report-active.admin-report-active-flash {
+    animation: adminReportActiveFlash 0.9s ease-out;
+}
+
+@keyframes adminReportActiveFlash {
+    0% {
+        box-shadow:
+            0 0 0 4px rgba(47, 107, 79, 0.35),
+            0 12px 24px rgba(80, 60, 30, 0.05);
+        background: #eef6ef;
+    }
+    100% {
+        box-shadow:
+            0 1px 2px rgba(80, 60, 30, 0.04),
+            0 4px 8px rgba(80, 60, 30, 0.04),
+            0 12px 24px rgba(80, 60, 30, 0.05);
+        background: #fffdf8;
+    }
+}
+/* ================================================================
+   ЗАГОЛОВОК ЛЕНТЫ + КНОПКА "РАЗВЕРНУТЬ ВСЕ"
+   ================================================================ */
+.completed-workouts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #ece4d4;
+}
+
+.completed-workouts-header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.completed-workouts-header-actions button {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 36px;
+}
+
+.completed-workouts-header-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.completed-workouts-header-text h3 {
+    margin: 0 0 4px 0;
+}
+
+.completed-workouts-header-text .hint {
+    margin: 0;
+}
+
+#toggleAllWorkoutsBtn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    font-size: 13px;
+    min-height: 36px;
+}
+
+@media (max-width: 700px) {
+    .completed-workouts-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .completed-workouts-header-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #toggleAllWorkoutsBtn,
+    #sortFeedBtn {
+        width: 100%;
+    } 
+} 
+/* ================================================================
+   РЕДАКТИРУЕМАЯ ДАТА В СОХРАНЁННОМ ОТЧЁТЕ
+   ================================================================ */
+.admin-report-saved-date {
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    padding: 3px 8px;
+    border-radius: 6px;
+    user-select: none;
+}
+
+.admin-report-saved-date:hover {
+    background: #eef6ef;
+    color: #2f6b4f;
+}
+
+.admin-report-date-edit-icon {
+    font-size: 11px;
+    opacity: 0.5;
+    margin-left: 4px;
+    transition: opacity 0.15s;
+}
+
+.admin-report-saved-date:hover .admin-report-date-edit-icon {
+    opacity: 1;
+}
+/* ================================================================
+   ДВЕ ДЕКОРАТИВНЫЕ КАРТИНКИ СПРАВА ВНУТРИ КАРТОЧКИ С ТРЕНИРОВКАМИ
+   ================================================================ */
+.card:has(.workouts-deco-row) {
+    position: relative;
+}
+
+.workouts-deco-row {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.workouts-deco-row .deco-top {
+    width: 78px;
+    height: auto;
+    opacity: 0.7;
+    transform: rotate(6deg) translateX(4px);
+}
+
+.workouts-deco-row .deco-bottom {
+    width: 100px;
+    height: auto;
+    opacity: 0.65;
+    transform: rotate(-6deg) translateX(8px);
+    margin-top: -4px;
+}
+
+/* Скрываем на средних и узких экранах */
+@media (max-width: 1100px) {
+    .workouts-deco-row {
+        display: none;
+    }
+}
+/* ================================================================
+   ДВЕ КАРТИНКИ ПО БОКАМ КАЛЕНДАРЯ (по нижнему краю)
+   ================================================================ */
+.calendar-card {
+    position: relative;   /* чтобы картинки могли позиционироваться относительно него */
+}
+
+.calendar-deco {
+    position: absolute;
+    bottom: 8px;           /* прижато к нижнему краю карточки */
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+}
+
+.calendar-deco img {
+    width: 130px;
+    height: auto;
+    opacity: 0.8;
+}
+.calendar-deco-right img {
+    width: 160px;
+    height: auto;
+    transform: rotate(6deg);
+}
+
+.calendar-deco-left {
+    right: 100%;
+    margin-right: 200px;
+}
+
+.calendar-deco-left img {
+    transform: rotate(-6deg);
+}
+
+.calendar-deco-right {
+    left: 100%;
+    margin-left: 200px;
+    bottom: -25px;
+}
+
+.calendar-deco-right img {
+    transform: rotate(6deg);
+}
+
+/* Скрываем на средних и узких экранах */
+@media (max-width: 1100px) {
+    .calendar-deco {
+        display: none;
+    }
 }

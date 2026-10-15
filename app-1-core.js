@@ -176,12 +176,13 @@ function switchPage(page, options) {
         maybeShowInstruction();
     }
 
-           if (page === 'workouts')  pageTitle.textContent = 'Мои тренировки';
+                      if (page === 'workouts')  pageTitle.textContent = 'Мои тренировки';
     if (page === 'clients')   pageTitle.textContent = 'Клиенты';
+        if (page === 'reports')   pageTitle.textContent = 'Архив тренировок и отчеты';
     if (page === 'templates') pageTitle.textContent = 'Шаблоны тренировок';
     if (page === 'profiles')  pageTitle.textContent = 'Анкеты';
     if (page === 'screening') pageTitle.textContent = 'Скрининг';
-    if (page === 'exercises') pageTitle.textContent = 'Упражнения';
+        if (page === 'exercises') pageTitle.textContent = 'Библиотека упражнений';
     if (page === 'profile')   pageTitle.textContent = 'Анкета';
         // Обновляем селект при заходе на «Мои тренировки»
     if (page === 'workouts' && typeof renderClientPicker === 'function') {
@@ -191,6 +192,7 @@ function switchPage(page, options) {
     closeSideMenu();
 
     if (page === 'clients'   && typeof renderClients === 'function') renderClients();
+    if (page === 'reports'   && typeof renderReportsPage === 'function') renderReportsPage();
     if (page === 'templates' && typeof renderTemplatesPage === 'function') renderTemplatesPage();
     if (page === 'profiles'  && typeof renderProfilesPage === 'function') renderProfilesPage();
     if (page === 'screening' && typeof renderScreeningPage === 'function') renderScreeningPage();
