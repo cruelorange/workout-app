@@ -5048,3 +5048,29 @@ body.admin-own-calendar #addFromTemplateBtn {
         display: none;
     }
 }
+/* Стили для инпутов внутри карточки анкеты (для админа) */
+.profile-section input,
+.profile-section select,
+.profile-section textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 1px solid #d8cfba;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #2b2b2b;
+    box-sizing: border-box;
+}
+
+.profile-section select {
+    height: 42px;
+}
+
+.profile-section input:focus,
+.profile-section select:focus,
+.profile-section textarea:focus {
+    outline: none;
+    border-color: #2f6b4f;
+    box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.12);
+}

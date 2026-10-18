@@ -140,6 +140,31 @@
                 <h2 id="clientSelectedDateLabel">Тренировки за …</h2>
 
             </div>
+                        <!-- Заголовок для клиента, когда форма скрыта -->
+            <div class="card client-only" id="clientDateHeader">
+                <h2 id="clientSelectedDateLabel">Тренировки за …</h2>
+            </div>
+
+            <!-- НОВЫЙ БЛОК: Настройка ссылки обратной связи (для админа в календаре клиента) -->
+            <div class="card admin-only" id="feedbackLinkCard" style="display: none;">
+                <h3 style="margin-bottom: 10px; color: #2f6b4f; font-size: 16px;">Обратная связь по тренировочному дню</h3>
+                <p class="hint" style="margin-bottom: 15px;">Ссылка на онлайн-блокнот для отзывов клиента (будет добавлена в PDF).</p>
+                
+                <div id="feedbackLinkViewMode">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <a id="feedbackLinkDisplay" href="#" target="_blank" style="color: #2563eb; text-decoration: underline; word-break: break-all;">Ссылка не задана</a>
+                        <button type="button" class="secondary" id="editFeedbackLinkBtn" style="flex-shrink: 0;">Редактировать</button>
+                    </div>
+                </div>
+
+                <div id="feedbackLinkEditMode" class="hidden" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="url" id="feedbackLinkInput" placeholder="https://..." style="flex: 1; padding: 8px 12px; border: 1px solid #d8cfba; border-radius: 6px;">
+                    <button type="button" id="saveFeedbackLinkBtn">Сохранить</button>
+                    <button type="button" class="secondary" id="cancelFeedbackLinkBtn">Отмена</button>
+                </div>
+            </div>
+            
+            <section id="workoutsList"></section>
             
                         <section id="workoutsList"></section>
 
@@ -692,19 +717,12 @@
                     </button>
                     <button type="button" class="action-btn" id="actionOpenScreening">
                         Посмотреть скрининг
-                    </button>
-                    <button type="button" class="action-btn" id="actionCopyCreds">
-                        Скопировать логин и пароль
-                    </button>
-                    <button type="button" class="action-btn" id="actionShowCreds">
-                        Показать логин и пароль
+                    
                     </button>
                     <button type="button" class="action-btn" id="actionEditClient">
                         Изменить имя / заметку
                     </button>
-                    <button type="button" class="action-btn" id="actionResetPassword">
-                        Сбросить пароль
-                    </button>
+                   
                     <button type="button" class="action-btn danger" id="actionDeleteClient">
                         Удалить клиента
                     </button>
@@ -728,18 +746,6 @@
                         <input type="text" id="clientName" required placeholder="Например, Иван Петров">
                     </label>
 
-                    <div id="clientLoginFields">
-                        <label>Логин
-                            <input type="text" id="clientLogin" placeholder="Латиница, цифры, без пробелов">
-                        </label>
-
-                                                <label>Пароль
-                            <div class="password-row">
-                                <input type="text" id="clientPassword" placeholder="Пусто — сгенерируется автоматически">
-                                <button type="button" class="secondary" id="generatePasswordBtn" title="Сгенерировать пароль"></button>
-                            </div>
-                        </label>
-                    </div>
 
                     <label>Заметка (только для админа)
                         <textarea id="clientNote" rows="3" placeholder="Например: травма колена, работает до 18:00"></textarea>
@@ -921,12 +927,15 @@
         </div>
     </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Библиотека для PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    
 <script src="icons.js"></script>
 <script src="app-1-core.js"></script>
 <script src="app-2-workouts.js"></script>
 <script src="app-3-library-programs.js"></script>
-<script src="app-4-supabase.js"></script>
+
 <script src="app-5-reports.js"></script>
 </body>
 </html>

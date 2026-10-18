@@ -708,20 +708,15 @@ window.openCreateClientModal = function() {
 
     const modal = document.getElementById('clientModal');
     const title = document.getElementById('clientModalTitle');
-    const loginFields = document.getElementById('clientLoginFields');
-
+    
     title.textContent = 'Новый клиент';
-    loginFields.classList.remove('hidden'); // при создании поля логина/пароля видны
-
+    
     // Очищаем форму
     document.getElementById('clientForm').reset();
     document.getElementById('clientName').value = '';
-    document.getElementById('clientLogin').value = '';
-    document.getElementById('clientPassword').value = '';
     document.getElementById('clientNote').value = '';
 
-    // Сразу генерируем пароль — удобно
-    document.getElementById('clientPassword').value = generatePassword(8);
+    // УДАЛЕНЫ строки, которые искали clientLoginFields, так как этого блока больше нет в HTML.
 
     clientFormSnapshot = snapshotClientForm();
     modal.classList.remove('hidden');
@@ -743,10 +738,10 @@ window.openEditClientModal = function(clientId) {
 
     const modal = document.getElementById('clientModal');
     const title = document.getElementById('clientModalTitle');
-    const loginFields = document.getElementById('clientLoginFields');
 
     title.textContent = 'Редактировать клиента';
-    loginFields.classList.add('hidden'); // при редактировании логин/пароль не показываем
+    
+    // Здесь тоже убрана строка с clientLoginFields
 
     document.getElementById('clientName').value = client.name || '';
     document.getElementById('clientNote').value = client.note || '';
@@ -1680,64 +1675,122 @@ function selectProfileClient(clientId) {
         '<p class="hint">' + (isEmpty ? 'Клиент ещё не заполнил анкету.' : 'Данные, которые заполнил клиент.') + '</p>' +
     '</div>';
 
-    // Если пусто — заглушка вместо формы
-    if (isEmpty) {
-        html += '<div class="profiles-empty-note">Клиент пока не заполнил анкету. Попросите его зайти в раздел «Моя анкета» и заполнить данные.</div>';
+      // Вызываем рендер анкеты (в режиме просмотра)
+    renderProfileView(clientId, false);
+}
+
+// Новая функция: рендер анкеты клиента для админа (с возможностью редактирования)
+function renderProfileView(clientId, isEditing) {
+    const client = findUserById(clientId);
+    if (!client || client.role !== 'client') return;
+
+    const profile = client.profile || {};
+    const isEmpty = !Object.keys(profile).some(function(k) { return profile[k]; });
+
+    // Заголовок
+    let html = '<div class="profiles-header">' +
+        '<h2>Анкета: ' + esc(client.name || client.login) + '</h2>' +
+        '<p class="hint">' + (isEmpty ? 'Клиент ещё не заполнил анкету.' : 'Данные, которые заполнил клиент.') + '</p>' +
+    '</div>';
+
+    // Если пусто и не редактируем — показываем заглушку
+    if (isEmpty && !isEditing) {
+        html += '<div class="profiles-empty-note">Клиент пока не заполнил анкету. Нажмите «Редактировать», чтобы заполнить её за него.</div>';
+        html += '<div style="margin-top: 15px;"><button type="button" id="editProfileBtn">Редактировать</button></div>';
         document.getElementById('profilesContent').innerHTML = html;
+        document.getElementById('editProfileBtn').addEventListener('click', function() {
+            renderProfileView(clientId, true);
+        });
         return;
     }
 
-    // Иначе — рендерим анкету в readonly
+    // Формируем форму (в режиме редактирования или просмотра)
+    const readonlyAttr = isEditing ? '' : 'readonly';
+    const disabledAttr = isEditing ? '' : 'disabled';
+    
+    // ... (здесь мы будем использовать buildProfileField, но для редактирования нам нужны input/select)
+    // Для простоты создадим форму прямо здесь, заменив readonly-поля на интерактивные.
+
+    // Блок 1: Общие данные
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Общие данные</h3>' +
         '<div class="profile-grid">' +
-            buildProfileField('Возраст', profile.age, 'Лет') +
-            buildProfileField('Рост', profile.height, 'см') +
-            buildProfileField('Вес', profile.weight, 'кг') +
-            buildProfileField('Пол', genderLabel(profile.gender)) +
+            buildProfileInput('age', 'Возраст', profile.age, 'number', 'Лет', isEditing) +
+            buildProfileInput('height', 'Рост', profile.height, 'number', 'см', isEditing) +
+            buildProfileInput('weight', 'Вес', profile.weight, 'number', 'кг', isEditing) +
+            buildProfileSelect('gender', 'Пол', profile.gender, {male: 'Мужской', female: 'Женский'}, isEditing) +
         '</div>' +
     '</div>';
 
+    // Блок 2: Здоровье
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Здоровье</h3>' +
-        buildProfileField('История травм и диагнозы', profile.injuries) +
-        buildProfileField('Противопоказания', profile.contraindications) +
-        buildProfileField('Боли и беспокойства сейчас', profile.pain) +
+        buildProfileInput('injuries', 'История травм и диагнозы', profile.injuries, 'textarea', '', isEditing) +
+        buildProfileInput('contraindications', 'Противопоказания', profile.contraindications, 'textarea', '', isEditing) +
+        buildProfileInput('pain', 'Боли и беспокойства сейчас', profile.pain, 'textarea', '', isEditing) +
     '</div>';
 
+    // Блок 3: Образ жизни
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Образ жизни</h3>' +
-        buildProfileField('Характер работы', activityLabel(profile.activity)) +
+        buildProfileSelect('activity', 'Характер работы', profile.activity, {sedentary: 'Сидячая работа', active: 'Активная работа', heavy: 'Тяжёлый физический труд'}, isEditing) +
         '<div class="profile-grid">' +
-            buildProfileField('Сон', profile.sleep, 'часов') +
-            buildProfileField('Приёмов пищи', profile.meals, 'в день') +
+            buildProfileInput('sleep', 'Сон', profile.sleep, 'number', 'Часов в сутки', isEditing) +
+            buildProfileInput('meals', 'Приёмов пищи', profile.meals, 'number', 'В день', isEditing) +
         '</div>' +
-        buildProfileField('Стрессовые факторы', profile.stress) +
+        buildProfileInput('stress', 'Стрессовые факторы', profile.stress, 'textarea', '', isEditing) +
     '</div>';
 
+    // Блок 4: Цели
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Цели</h3>' +
-        buildProfileField('Цели', profile.goals) +
-        buildProfileField('Период достижения', profile.period) +
+        buildProfileInput('goals', 'Цели', profile.goals, 'textarea', '', isEditing) +
+        buildProfileInput('period', 'Период достижения', profile.period, 'text', '', isEditing) +
     '</div>';
 
+    // Блок 5: Условия для тренировок
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Условия для тренировок</h3>' +
-        buildProfileField('Место тренировок', placeLabel(profile.place)) +
+        buildProfileSelect('place', 'Место тренировок', profile.place, {home: 'Дом', gym: 'Зал', street: 'Улица', mixed: 'Смешанно'}, isEditing) +
         '<div class="profile-grid">' +
-            buildProfileField('Тренировок в неделю', profile.perWeek) +
-            buildProfileField('Длительность тренировки', durationLabel(profile.duration)) +
+            buildProfileInput('perWeek', 'Тренировок в неделю', profile.perWeek, 'number', 'Например, 3', isEditing) +
+            buildProfileSelect('duration', 'Длительность тренировки', profile.duration, {'30-60': '30–60 минут', '60-90': '60–90 минут', '90-120': '90–120 минут'}, isEditing) +
         '</div>' +
-        buildProfileField('Инвентарь', profile.equipment) +
+        buildProfileInput('equipment', 'Инвентарь', profile.equipment, 'textarea', '', isEditing) +
     '</div>';
 
+    // Блок 6: Опыт тренировок
     html += '<div class="card profile-section">' +
         '<h3 class="profile-section-title">Опыт тренировок</h3>' +
-        buildProfileField('Опыт', profile.experience) +
-        buildProfileField('Уровень', levelLabel(profile.level)) +
+        buildProfileInput('experience', 'Опыт', profile.experience, 'textarea', '', isEditing) +
+        buildProfileSelect('level', 'Уровень', profile.level, {beginner: 'Новичок', intermediate: 'Средний', advanced: 'Продвинутый'}, isEditing) +
     '</div>';
 
+    // Кнопки
+    html += '<div class="profile-actions">';
+    if (isEditing) {
+        html += '<button type="button" id="saveProfileByAdminBtn">Сохранить</button>' +
+                '<button type="button" class="secondary" id="cancelProfileByAdminBtn">Отмена</button>';
+    } else {
+        html += '<button type="button" id="editProfileBtn">Редактировать</button>';
+    }
+    html += '<span class="profile-status" id="profileStatus"></span></div>';
+
     document.getElementById('profilesContent').innerHTML = html;
+
+    // Обработчики
+    if (isEditing) {
+        document.getElementById('saveProfileByAdminBtn').addEventListener('click', function() {
+            saveProfileByAdmin(clientId);
+        });
+        document.getElementById('cancelProfileByAdminBtn').addEventListener('click', function() {
+            renderProfileView(clientId, false);
+        });
+    } else {
+        document.getElementById('editProfileBtn').addEventListener('click', function() {
+            renderProfileView(clientId, true);
+        });
+    }
 }
 
 // Построить одно readonly-поле анкеты
@@ -1922,22 +1975,20 @@ function renderClients() {
             ? '<span class="cell-client-note" title="' + esc(c.note) + '">' + esc(c.note) + '</span>'
             : '<span class="cell-empty">—</span>';
 
-        return '<tr>' +
-                        '<td class="cell-client-name" data-label="Имя">' + esc(c.name || c.login) + '</td>' +
-            '<td data-label="Логин"><span class="cell-client-login">' + esc(c.login) + '</span></td>' +
+                return '<tr>' +
+            '<td class="cell-client-name" data-label="Имя">' + esc(c.name || c.login) + '</td>' +
             '<td class="cell-client-date" data-label="Создан">' + formatCreatedAt(c.createdAt) + '</td>' +
             '<td data-label="Заметка">' + noteHtml + '</td>' +
             '<td class="cell-client-actions" data-label="Управление">' +
-    '<button type="button" class="btn-trainings" title="Открыть календарь тренировок" onclick="openClientCalendar(\'' + c.id + '\')">Тренировки</button>' +
-    '<button type="button" class="btn-more secondary" title="Другие действия" onclick="openClientActionsModal(\'' + c.id + '\')">Действия</button>' +
-'</td>' +
+                '<button type="button" class="btn-trainings" title="Открыть календарь тренировок" onclick="openClientCalendar(\'' + c.id + '\')">Тренировки</button>' +
+                '<button type="button" class="btn-more secondary" title="Другие действия" onclick="openClientActionsModal(\'' + c.id + '\')">Действия</button>' +
+            '</td>' +
         '</tr>';
     }).join('');
 
-    listEl.innerHTML = '<table class="clients-table">' +
+        listEl.innerHTML = '<table class="clients-table">' +
         '<thead><tr>' +
     '<th>Имя</th>' +
-    '<th>Логин</th>' +
     '<th>Создан</th>' +
     '<th>Заметка</th>' +
     '<th>Управление</th>' +
@@ -2147,15 +2198,7 @@ document.getElementById('addClientBtn').addEventListener('click', function() {
     openCreateClientModal();
 });
 
-// Кнопка "Сгенерировать пароль"
-const generatePwdBtn = document.getElementById('generatePasswordBtn');
-if (generatePwdBtn) {
-    generatePwdBtn.innerHTML = icons.refresh(16);
-    generatePwdBtn.addEventListener('click', function() {
-        document.getElementById('clientPassword').value = generatePassword(8);
-        clientFormSnapshot = snapshotClientForm(); // чтобы не считалось «изменением»
-    });
-}
+
 
 // Кнопка "Отмена"
 document.getElementById('cancelClient').addEventListener('click', async function() {
@@ -2163,19 +2206,20 @@ document.getElementById('cancelClient').addEventListener('click', async function
     closeClientModal();
 });
 
-// Сохранение формы
 document.getElementById('clientForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    clientFormSnapshot = ''; // сбрасываем, чтобы confirmCancel не сработал при успешном сохранении
+    clientFormSnapshot = ''; 
+    const nameInput = document.getElementById('clientName');
+    const name = nameInput ? nameInput.value.trim() : '';
 
-    const name = document.getElementById('clientName').value.trim();
-
-    // Валидация: имя
     if (!name) {
         await showAlert('Введите имя клиента');
         return;
     }
+
+    const noteInput = document.getElementById('clientNote');
+    const note = noteInput ? noteInput.value.trim() : '';
 
     // === РЕЖИМ РЕДАКТИРОВАНИЯ ===
     if (editingClientId) {
@@ -2185,7 +2229,7 @@ document.getElementById('clientForm').addEventListener('submit', async function(
             return;
         }
         client.name = name;
-        client.note = document.getElementById('clientNote').value.trim();
+        client.note = note;
         saveUsersData();
         closeClientModal();
         renderClients();
@@ -2193,39 +2237,15 @@ document.getElementById('clientForm').addEventListener('submit', async function(
     }
 
     // === РЕЖИМ СОЗДАНИЯ ===
-    let login = document.getElementById('clientLogin').value.trim();
-    let password = document.getElementById('clientPassword').value.trim();
-
-    // Если логин пустой — генерируем автоматически
-    if (!login) {
-        login = 'client' + (usersData.users.length + 1);
-    }
-
-    // Если пароль пустой — генерируем
-    if (!password) {
-        password = generatePassword(8);
-    }
-
-    // Валидация: логин уникален
-    if (findUserByLogin(login)) {
-        await showAlert('Логин «' + login + '» уже занят. Введите другой.');
-        return;
-    }
-
-    // Валидация: логин без пробелов и спецсимволов (латиница, цифры, _, -)
-    if (!/^[A-Za-z0-9_-]{3,}$/.test(login)) {
-        await showAlert('Логин должен содержать только латиницу, цифры, _ или -, минимум 3 символа.');
-        return;
-    }
-
+    
     // Создаём клиента
     usersData.users.push({
         id: uuid(),
-        login: login,
-        password: password,
+        login: 'client_' + uuid().slice(0, 6), // Технический логин (не используется)
+        password: 'none',                     // Технический пароль
         role: 'client',
         name: name,
-        note: document.getElementById('clientNote').value.trim(),
+        note: note,
         createdAt: new Date().toISOString(),
         workoutsByDate: {}
     });
@@ -2234,13 +2254,7 @@ document.getElementById('clientForm').addEventListener('submit', async function(
     closeClientModal();
     renderClients();
 
-    // Показываем логин и пароль, чтобы админ их скопировал
-    await showAlert(
-        'Клиент создан!\n\n' +
-        'Логин: ' + login + '\n' +
-        'Пароль: ' + password + '\n\n' +
-        'Скопируйте и передайте клиенту.'
-    );
+    await showAlert('Клиент «' + name + '» успешно создан!');
 });
 // ================================================================
 //   ОБРАБОТЧИКИ АНКЕТЫ
@@ -2392,33 +2406,9 @@ document.getElementById('actionOpenScreening').addEventListener('click', functio
 attachBackdropClose(document.getElementById('clientActionsModal'), closeClientActionsModal);
 attachEscClose(document.getElementById('clientActionsModal'), closeClientActionsModal);
 
-// 📋 Скопировать логин и пароль
-document.getElementById('actionCopyCreds').addEventListener('click', async function() {
-    if (!actionsClientId) return;
-    const client = findUserById(actionsClientId);
-    if (!client) return;
 
-    try {
-        await copyToClipboard(buildCredentialsText(client));
-        closeClientActionsModal();
-        await showAlert('Логин и пароль скопированы в буфер обмена');
-    } catch (e) {
-        await showAlert('Не удалось скопировать. Скопируйте вручную:\n\n' + buildCredentialsText(client));
-    }
-});
 
-// 👁 Показать логин и пароль
-document.getElementById('actionShowCreds').addEventListener('click', async function() {
-    if (!actionsClientId) return;
-    const client = findUserById(actionsClientId);
-    if (!client) return;
 
-    await showAlert(
-        'Клиент: ' + (client.name || client.login) + '\n\n' +
-        'Логин: ' + client.login + '\n' +
-        'Пароль: ' + client.password
-    );
-});
 
 // ✏️ Изменить имя / заметку
 document.getElementById('actionEditClient').addEventListener('click', function() {
@@ -2428,32 +2418,7 @@ document.getElementById('actionEditClient').addEventListener('click', function()
     openEditClientModal(clientId);
 });
 
-// 🔑 Сбросить пароль
-document.getElementById('actionResetPassword').addEventListener('click', async function() {
-    if (!actionsClientId) return;
-    const client = findUserById(actionsClientId);
-    if (!client) return;
 
-    const ok = await showConfirm(
-        'Сбросить пароль?',
-        'Клиенту «' + (client.name || client.login) + '» будет сгенерирован новый пароль. Старый перестанет работать.',
-        'Да, сбросить'
-    );
-    if (!ok) return;
-
-    const newPassword = generatePassword(8);
-    client.password = newPassword;
-    saveUsersData();
-
-    closeClientActionsModal();
-
-    await showAlert(
-        'Новый пароль для «' + (client.name || client.login) + '»:\n\n' +
-        'Логин: ' + client.login + '\n' +
-        'Пароль: ' + newPassword + '\n\n' +
-        'Скопируйте и передайте клиенту.'
-    );
-});
 
 // 🗑️ Удалить клиента
 document.getElementById('actionDeleteClient').addEventListener('click', async function() {
@@ -2521,3 +2486,73 @@ function logout() {
         });
     }
 })();
+// Вспомогательная функция для создания input или textarea
+function buildProfileInput(key, label, value, type, placeholder, isEditing) {
+    const val = value !== undefined && value !== null ? value : '';
+    let fieldHtml = '';
+
+    if (!isEditing) {
+        const display = val || '<span class="cell-empty">—</span>';
+        fieldHtml = '<div class="profile-readonly-field">' + display + '</div>';
+    } else {
+        if (type === 'textarea') {
+            fieldHtml = '<textarea data-profile-key="' + key + '" rows="3" placeholder="' + esc(placeholder) + '">' + esc(val) + '</textarea>';
+        } else {
+            fieldHtml = '<input type="' + type + '" data-profile-key="' + key + '" value="' + esc(val) + '" placeholder="' + esc(placeholder) + '">';
+        }
+    }
+
+    return '<label>' + esc(label) + fieldHtml + '</label>';
+}
+
+// Вспомогательная функция для создания select
+function buildProfileSelect(key, label, value, options, isEditing) {
+    const val = value || '';
+    let fieldHtml = '';
+
+    if (!isEditing) {
+        const display = options[val] || '<span class="cell-empty">—</span>';
+        fieldHtml = '<div class="profile-readonly-field">' + display + '</div>';
+    } else {
+        fieldHtml = '<select data-profile-key="' + key + '">';
+        fieldHtml += '<option value="">— Не указано —</option>';
+        Object.keys(options).forEach(function(optKey) {
+            const selected = optKey === val ? ' selected' : '';
+            fieldHtml += '<option value="' + optKey + '"' + selected + '>' + options[optKey] + '</option>';
+        });
+        fieldHtml += '</select>';
+    }
+
+    return '<label>' + esc(label) + fieldHtml + '</label>';
+}
+// Сохранение анкеты админом
+function saveProfileByAdmin(clientId) {
+    const client = findUserById(clientId);
+    if (!client || client.role !== 'client') return;
+
+    const profile = {};
+    
+    // Собираем данные из всех полей с атрибутом data-profile-key
+    document.querySelectorAll('#profilesContent [data-profile-key]').forEach(function(el) {
+        const key = el.dataset.profileKey;
+        profile[key] = el.value.trim();
+    });
+
+    client.profile = profile;
+    client.profileUpdatedAt = new Date().toISOString();
+    saveUsersData();
+
+    // Показываем «Сохранено»
+    const statusEl = document.getElementById('profileStatus');
+    if (statusEl) {
+        statusEl.textContent = '✓ Сохранено';
+        statusEl.classList.add('saved');
+        setTimeout(function() {
+            statusEl.textContent = '';
+            statusEl.classList.remove('saved');
+        }, 2000);
+    }
+
+    // Перерисовываем в режиме просмотра
+    renderProfileView(clientId, false);
+}

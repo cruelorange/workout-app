@@ -382,39 +382,43 @@ const COMPLETED_WORKOUTS_PAGE_SIZE = 10;
 // Сколько сейчас показано у активного клиента
 let completedWorkoutsShown = COMPLETED_WORKOUTS_PAGE_SIZE;
 
-// Собрать массив выполненных тренировок клиента
+// Собрать массив запланированных/выполненных тренировок клиента
 // Возвращает: [{ dateKey, workout, feedback }, ...]
-// Отсортировано: новые сверху.
 function getClientCompletedWorkouts(client) {
     if (!client || !client.workoutsByDate) return [];
 
     const result = [];
+    const todayKey = toKey(new Date()); // Сегодняшняя дата в формате YYYY-MM-DD
 
     Object.keys(client.workoutsByDate).forEach(function(key) {
         // Пропускаем служебные ключи (dayOff, feedback)
         if (key.indexOf('_dayOff') !== -1) return;
         if (key.indexOf('_feedback') !== -1) return;
 
-        // Есть ли обратная связь по дню?
-        const feedback = client.workoutsByDate[key + '_feedback'];
-        if (!feedback) return;
+        // Берем только те даты, которые УЖЕ наступили (сегодня или в прошлом)
+        if (key > todayKey) return; 
 
         const workouts = client.workoutsByDate[key];
         if (!Array.isArray(workouts) || workouts.length === 0) return;
 
+        // Получаем обратную связь, ЕСЛИ она есть (чтобы показать сложность в карточке)
+        const feedback = client.workoutsByDate[key + '_feedback'];
+
         // Каждая тренировка этого дня — отдельная запись
         workouts.forEach(function(w) {
-            result.push({
-                dateKey: key,
-                workout: w,
-                feedback: feedback
-            });
+            // Показываем только те тренировки, в которых есть хотя бы одно упражнение
+            const hasExercises = w.blocks && Object.values(w.blocks).some(arr => arr && arr.length > 0);
+            if (hasExercises) {
+                result.push({
+                    dateKey: key,
+                    workout: w,
+                    feedback: feedback // Может быть null, это нормально
+                });
+            }
         });
     });
 
     // Сортировка: новые сверху.
-    // 1) По дате (dateKey, лексикографически = хронологически).
-    // 2) Внутри одного дня — по порядку из workoutsByDate (как было).
     result.sort(function(a, b) {
         if (a.dateKey < b.dateKey) return 1;
         if (a.dateKey > b.dateKey) return -1;
